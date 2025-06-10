@@ -8,21 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a, _b;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const service_js_1 = require("./service.js");
 (_a = document.getElementById('create-service-btn')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
-    const nameInput = document.getElementById('service-name');
-    const descriptionInput = document.getElementById('service-description');
-    try {
-        const result = yield (0, service_js_1.createService)(nameInput.value, descriptionInput.value);
-        alert(`Slu�ba vytvo�ena s ID: ${result.id}`);
-    }
-    catch (error) {
-        alert("Chyba p�i vytv��en� slu�by");
-    }
-}));
-(_b = document.getElementById('create-service-btn')) === null || _b === void 0 ? void 0 : _b.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
     const nameInput = document.getElementById('service-name');
     const descriptionInput = document.getElementById('service-description');
     try {
