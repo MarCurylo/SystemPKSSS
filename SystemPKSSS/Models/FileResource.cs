@@ -16,7 +16,7 @@ namespace SystemPKSSS.Models
         public int  FileSize {  get; set; }
         public string StoragePath { get; set; }
         public int UploadedBy { get; set; }
-        public User User {  get; set; }
+        //public User User {  get; set; }
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
         public string Description { get; set; }
 

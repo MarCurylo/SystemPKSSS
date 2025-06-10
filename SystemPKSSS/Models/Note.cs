@@ -15,7 +15,7 @@ namespace SystemPKSSS.Models
         public Entity Entity { get; set; }
 
         public int AuthorUserId { get; set; }
-        public User User { get; set; }
+        //public User User { get; set; }
 
         public Service Service { get; set; }
 
