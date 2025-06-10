@@ -1,4 +1,4 @@
-import { createService } from './dist/services.js';
+import { createService } from './service.js';
 
 document.getElementById('create-service-btn')?.addEventListener('click', async () => {
     const nameInput = <HTMLInputElement>document.getElementById('service-name');
@@ -6,8 +6,8 @@ document.getElementById('create-service-btn')?.addEventListener('click', async (
 
     try {
         const result = await createService(nameInput.value, descriptionInput.value);
-        alert(`Služba vytvoøena s ID: ${result.id}`);
+        alert(`Sluï¿½ba vytvoï¿½ena s ID: ${result.id}`);
     } catch (error) {
-        alert("Chyba pøi vytváøení služby");
+        alert("Chyba pï¿½i vytvï¿½ï¿½enï¿½ sluï¿½by");
     }
 });

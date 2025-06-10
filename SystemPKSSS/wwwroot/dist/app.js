@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var _a;
-import { createService } from './dist/services.js';
+import { createService } from './service.js';
 (_a = document.getElementById('create-service-btn')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
     const nameInput = document.getElementById('service-name');
     const descriptionInput = document.getElementById('service-description');
