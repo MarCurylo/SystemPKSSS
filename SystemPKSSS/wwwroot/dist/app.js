@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -9,13 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var _a;
-Object.defineProperty(exports, "__esModule", { value: true });
-const services_js_1 = require("./services.js");
+import { createService } from './dist/services.js';
 (_a = document.getElementById('create-service-btn')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
     const nameInput = document.getElementById('service-name');
     const descriptionInput = document.getElementById('service-description');
     try {
-        const result = yield (0, services_js_1.createService)(nameInput.value, descriptionInput.value);
+        const result = yield createService(nameInput.value, descriptionInput.value);
         alert(`Slu�ba vytvo�ena s ID: ${result.id}`);
     }
     catch (error) {

@@ -1,4 +1,4 @@
-import { createService } from './services.js';
+import { createService } from './dist/services.js';
 
 document.getElementById('create-service-btn')?.addEventListener('click', async () => {
     const nameInput = <HTMLInputElement>document.getElementById('service-name');
