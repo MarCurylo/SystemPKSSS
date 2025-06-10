@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SystemPKSSS.Models;
 
 namespace SystemPKSSS.Models
 {
@@ -10,19 +11,14 @@ namespace SystemPKSSS.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
         public int EntityTypeId { get; set; }
 
-        [ForeignKey(nameof(EntityTypeId))]
         public EntityType EntityType { get; set; }
 
-        [Required]
         public int ServiceId { get; set; }
 
-        [ForeignKey(nameof(ServiceId))]
         public Service Service { get; set; }
 
-        [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? UpdatedAt { get; set; }
