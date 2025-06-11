@@ -8,7 +8,7 @@ export async function createService(name: string, description: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Nepodaøilo se vytvoøit službu");
+    throw new Error("Nepodaï¿½ilo se vytvoï¿½it sluï¿½bu");
   }
 
   return await response.json();

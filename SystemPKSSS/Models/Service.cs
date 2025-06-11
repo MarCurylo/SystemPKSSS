@@ -13,7 +13,7 @@ namespace SystemPKSSS.Models
 
         public string Name { get; set; }
         public string Description { get; set; }
-        public int IsActive {  get; set; }
+        public bool IsActive {  get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

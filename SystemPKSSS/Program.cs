@@ -8,24 +8,10 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 
 // 🔧 2. Registrace služeb
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDbConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // ✅ 3. Vytvoření aplikace
 var app = builder.Build();
-
-// 🛠 4. Výpis výjimek do konzole pro debug
-app.Use(async (context, next) =>
-{
-    try
-    {
-        await next();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine("💥 CHYBA: " + ex.ToString());
-        throw;
-    }
-});
 
 // 🌐 5. Middleware pro frontend (HTML, JS, CSS)
 app.UseDefaultFiles(); // hledá index.html automaticky

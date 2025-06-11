@@ -7,17 +7,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a;
-import { createService } from './services.js';
-(_a = document.getElementById('create-service-btn')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
-    const nameInput = document.getElementById('service-name');
-    const descriptionInput = document.getElementById('service-description');
-    try {
-        const result = yield createService(nameInput.value, descriptionInput.value);
-        alert(`Služba vytvořena s ID: ${result.id}`);
-    }
-    catch (error) {
-        alert("Chyba při vytvření služby");
-    }
-}));
-//# sourceMappingURL=app.js.map
+export function createService(name, description) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch('/services', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, description })
+        });
+        if (!response.ok) {
+            throw new Error("Nepoda�ilo se vytvo�it slu�bu");
+        }
+        return yield response.json();
+    });
+}
+//# sourceMappingURL=services.js.map
