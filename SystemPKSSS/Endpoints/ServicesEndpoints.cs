@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SystemPKSSS.Models;
+using SystemPKSSSS.Data;
+
+namespace SystemPKSSSS.Endpoints;
 
 public static class ServicesEndpoints
 {

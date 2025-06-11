@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SystemPKSSS.Models;
 
+namespace SystemPKSSSS.Data;
+
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

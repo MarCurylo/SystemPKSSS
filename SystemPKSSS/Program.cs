@@ -1,30 +1,39 @@
-using Microsoft.EntityFrameworkCore;
+ï»¿using Microsoft.EntityFrameworkCore;
+using SystemPKSSSS.Data;        // namespace s ApplicationDbContext
+using SystemPKSSSS.Endpoints;   // namespace s MapServicesEndpoints()
 
 var builder = WebApplication.CreateBuilder(args);
-
-// ?? nutné pro naètení appsettings.json manuálnì, pokud nemáš šablonu
+// ğŸ”§ 1. NaÄtenÃ­ konfigurace ze souboru
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-
-// 1. Registrace slueb (DbContext, CORS, apod.)
-
-
+// ğŸ”§ 2. Registrace sluÅ¾eb
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-Console.WriteLine("?? Connection string:");
-Console.WriteLine(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("LocalDbConnection")));
 
-// 2. Registrace statickıch souborù (HTML, CSS, JS)
-builder.Services.AddRouting();
-
+// âœ… 3. VytvoÅ™enÃ­ aplikace
 var app = builder.Build();
 
-// 3. Middleware pro statické soubory
-app.UseDefaultFiles();  // slouí pro / => index.html
-app.UseStaticFiles();   // zpøístupní wwwroot
+// ğŸ›  4. VÃ½pis vÃ½jimek do konzole pro debug
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("ğŸ’¥ CHYBA: " + ex.ToString());
+        throw;
+    }
+});
 
-// 4. Mapování endpointù
+// ğŸŒ 5. Middleware pro frontend (HTML, JS, CSS)
+app.UseDefaultFiles(); // hledÃ¡ index.html automaticky
+app.UseStaticFiles();  // slouÅ¾Ã­ /wwwroot
+
+// ğŸŒ 6. API endpointy
 app.MapServicesEndpoints();
+// app.MapEntitiesEndpoints(); // dalÅ¡Ã­ mÅ¯Å¾eÅ¡ pÅ™idat postupnÄ›
 
-// 5. Start
+// ğŸš€ 7. Start serveru
 app.Run();
