@@ -7,14 +7,64 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// Načti všechny entity ve sluzbe
+// Načti všechny druhy entit
+export function loadEntityTypes() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch("/entitytypes");
+        if (!response.ok) {
+            throw new Error("Failed to fetch entity types");
+        }
+        return yield response.json();
+    });
+}
+// Načti všechny druhy entit ve sluzbe
 export function loadEntityTypesByService(serviceId) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch(`/services/${serviceId}/entityTypes`);
         if (!response.ok) {
-            throw new Error("Failed to fetch entitytypes");
+            throw new Error("Failed to fetch entity types for service");
         }
         return yield response.json();
+    });
+}
+// Vytvoř novy druh entity ve sluzbe
+export function createEntityType(serviceId, entityType) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(`/services/${serviceId}/entityTypes`, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(entityType)
+        });
+        if (!response.ok) {
+            throw new Error("Failed to create entity type");
+        }
+        return yield response.json();
+    });
+}
+// Update existující druh entity
+export function updateEntityType(serviceId, entityType) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!entityType.id) {
+            throw new Error("EntityType ID is required for update");
+        }
+        const response = yield fetch(`/services/${serviceId}/entityTypes/${entityType.id}`, {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(entityType)
+        });
+        if (!response.ok) {
+            throw new Error("Failed to update entity type");
+        }
+        return yield response.json();
+    });
+}
+// Smazání druhu entity
+export function deleteEntityType(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(`/entitytypes/${id}`, { method: "DELETE" });
+        if (!response.ok) {
+            throw new Error("Failed to delete entity type");
+        }
     });
 }
 //# sourceMappingURL=entityTypesApi.js.map

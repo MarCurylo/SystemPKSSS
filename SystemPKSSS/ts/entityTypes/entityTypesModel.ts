@@ -5,3 +5,9 @@ export interface EntityType {
   description?: string;
   createdAt: string;
 }
+
+// Vytvareni
+export type NewEntityType = Omit<EntityType, 'id' | 'createdAt'>;
+
+// Update
+export type UpdateEntityType = Omit<EntityType, 'createdAt'>;
