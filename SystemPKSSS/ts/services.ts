@@ -3,11 +3,11 @@ export async function loadServices() {
   return await response.json();
 }
 
-export async function createService(name: string, description: string) {
+export async function createService(name: string, description: string, isActive: boolean) {
   const response = await fetch('/services', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({name, description})
+    body: JSON.stringify({name, description, isActive})
   });
   return await response.json();
 }

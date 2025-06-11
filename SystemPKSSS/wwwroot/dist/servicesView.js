@@ -17,7 +17,8 @@ function refreshServicesList(container) {
         listContainer.innerHTML = "";
         services.forEach(service => {
             const item = document.createElement("div");
-            item.innerHTML = `<b>${service.name}</b> - ${service.isActive ? "Aktivní" : "Neaktivní"} 
+            item.innerHTML = `<b>${service.name}</b> - ${service.isActive ? "Aktivní" : "Neaktivní"}
+        Vytvořeno: ${new Date(service.createdAt).toLocaleString('cs-CZ')}<br>
         <button data-id="${service.id}" class="edit-btn">Edit</button>
         <button data-id="${service.id}" class="delete-btn">Smazat</button>`;
             listContainer.appendChild(item);
@@ -42,11 +43,14 @@ function renderServiceForm(container) {
     <h2>Nová služba</h2>
     <input id="service-name" placeholder="Název služby"><br>
     <textarea id="service-description" placeholder="Popis služby"></textarea><br>
+          <label>Aktivní: <input type="checkbox" id="service-active" "checked" : ""}></label><br>
     <button id="save-service-button">Uložit</button>`;
     (_a = document.getElementById("save-service-button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+        debugger;
         const name = document.getElementById("service-name").value;
         const description = document.getElementById("service-description").value;
-        createService(name, description).then(() => renderServicesTab(container));
+        const isActive = document.getElementById("service-active").checked;
+        createService(name, description, isActive).then(() => renderServicesTab(container));
     });
 }
 function renderServiceEditForm(id, container) {

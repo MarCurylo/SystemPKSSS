@@ -14,6 +14,6 @@ namespace SystemPKSSS.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsActive {  get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

@@ -3,23 +3,23 @@ using SystemPKSSSS.Data;        // namespace s ApplicationDbContext
 using SystemPKSSSS.Endpoints;   // namespace s MapServicesEndpoints()
 
 var builder = WebApplication.CreateBuilder(args);
-// 🔧 1. Načtení konfigurace ze souboru
+//Načtení konfigurace ze souboru
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-// 🔧 2. Registrace služeb
+// Databaze
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ✅ 3. Vytvoření aplikace
+// Vytvoření aplikace
 var app = builder.Build();
 
-// 🌐 5. Middleware pro frontend (HTML, JS, CSS)
-app.UseDefaultFiles(); // hledá index.html automaticky
-app.UseStaticFiles();  // slouží /wwwroot
+//Frontend 
+app.UseDefaultFiles(); //index.html
+app.UseStaticFiles();  //
 
-// 🌐 6. API endpointy
+//endpointy
 app.MapServicesEndpoints();
 // app.MapEntitiesEndpoints(); // další můžeš přidat postupně
 
-// 🚀 7. Start serveru
+//Start
 app.Run();

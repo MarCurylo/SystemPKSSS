@@ -13,12 +13,12 @@ export function loadServices() {
         return yield response.json();
     });
 }
-export function createService(name, description) {
+export function createService(name, description, isActive) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch('/services', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, description })
+            body: JSON.stringify({ name, description, isActive })
         });
         return yield response.json();
     });
