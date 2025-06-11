@@ -15,7 +15,7 @@ public static class EntityTypesEndpoints
             var serviceExists = await db.Services.AnyAsync(s => s.Id == entityType.ServiceId);
             if (!serviceExists)
             {
-                return Results.BadRequest($"Service with ID {entityType.ServiceId} does not exist.");
+                return Results.BadRequest($"Entity with ID {entityType.ServiceId} does not exist.");
             }
 
             db.EntityTypes.Add(entityType);
