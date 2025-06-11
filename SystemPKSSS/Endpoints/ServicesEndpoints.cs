@@ -3,6 +3,7 @@ using SystemPKSSS.Models;
 using SystemPKSSSS.Data;
 
 namespace SystemPKSSSS.Endpoints;
+
 public static class ServicesEndpoints
 {
     public static void MapServicesEndpoints(this IEndpointRouteBuilder app)
@@ -43,7 +44,7 @@ public static class ServicesEndpoints
             return Results.Ok(service);
         });
 
-        // Aktivace / deaktivace (samostatně)
+        // Aktivace / deaktivace
         app.MapPut("/services/{id}/activate", async (int id, bool activate, ApplicationDbContext db) =>
         {
             var service = await db.Services.FindAsync(id);

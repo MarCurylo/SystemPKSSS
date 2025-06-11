@@ -52,7 +52,6 @@ function renderServiceForm(container: HTMLElement) {
     <button id="save-service-button">Uložit</button>`;
 
   document.getElementById("save-service-button")?.addEventListener("click", () => {
-    debugger
     const name = (document.getElementById("service-name") as HTMLInputElement).value;
     const description = (document.getElementById("service-description") as HTMLTextAreaElement).value;
     const isActive = (document.getElementById("service-active") as HTMLInputElement).checked;
