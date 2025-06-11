@@ -7,18 +7,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+export function loadServices() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch('/services');
+        return yield response.json();
+    });
+}
 export function createService(name, description) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch('/services', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, description })
         });
-        if (!response.ok) {
-            throw new Error("Nepoda�ilo se vytvo�it slu�bu");
-        }
+        return yield response.json();
+    });
+}
+export function updateService(id, name, description, isActive) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(`/services/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, name, description, isActive })
+        });
+        return yield response.json();
+    });
+}
+export function deleteService(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield fetch(`/services/${id}`, { method: 'DELETE' });
+    });
+}
+export function toggleServiceActivation(id, activate) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(`/services/${id}/activate?activate=${activate}`, { method: 'PUT' });
         return yield response.json();
     });
 }

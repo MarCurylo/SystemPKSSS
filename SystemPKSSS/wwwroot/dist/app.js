@@ -1,23 +1,17 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var _a;
-import { createService } from './services.js';
-(_a = document.getElementById('create-service-btn')) === null || _a === void 0 ? void 0 : _a.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
-    const nameInput = document.getElementById('service-name');
-    const descriptionInput = document.getElementById('service-description');
-    try {
-        const result = yield createService(nameInput.value, descriptionInput.value);
-        alert(`Služba vytvořena s ID: ${result.id}`);
+import { renderServicesTab } from './servicesView.js';
+function loadApp() {
+    const container = document.getElementById('main-container');
+    if (!container)
+        return;
+    const hash = window.location.hash || '#services';
+    switch (hash) {
+        case '#services':
+            renderServicesTab(container);
+            break;
+        default:
+            container.innerHTML = '<h2>404 - Nenalezeno</h2>';
     }
-    catch (error) {
-        alert("Chyba při vytvření služby");
-    }
-}));
+}
+window.addEventListener('hashchange', loadApp);
+window.addEventListener('load', loadApp);
 //# sourceMappingURL=app.js.map

@@ -1,13 +1,19 @@
-import { createService } from './services.js';
+import { renderServicesTab } from './servicesView.js';
 
-document.getElementById('create-service-btn')?.addEventListener('click', async () => {
-    const nameInput = <HTMLInputElement>document.getElementById('service-name');
-    const descriptionInput = <HTMLInputElement>document.getElementById('service-description');
+function loadApp() {
+  const container = document.getElementById('main-container');
+  if (!container) return;
 
-    try {
-        const result = await createService(nameInput.value, descriptionInput.value);
-        alert(`Služba vytvořena s ID: ${result.id}`);
-    } catch (error) {
-        alert("Chyba při vytvření služby");
-    }
-});
+  const hash = window.location.hash || '#services';
+
+  switch (hash) {
+    case '#services':
+      renderServicesTab(container);
+      break;
+    default:
+      container.innerHTML = '<h2>404 - Nenalezeno</h2>';
+  }
+}
+
+window.addEventListener('hashchange', loadApp);
+window.addEventListener('load', loadApp);
