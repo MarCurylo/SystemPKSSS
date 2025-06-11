@@ -1,4 +1,4 @@
-import { loadServices, createService, updateService, deleteService } from './services/servicesApi.js';
+import { loadServices, createService, updateService, deleteService } from './servicesApi.js';
 export function renderServicesTab(container) {
     var _a;
     container.innerHTML = `<h2>Seznam služeb</h2>

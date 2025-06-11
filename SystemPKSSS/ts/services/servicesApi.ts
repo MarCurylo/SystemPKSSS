@@ -1,11 +1,4 @@
-export interface Service {
-    id?: number;
-    name: string;
-    description: string;
-    isActive: boolean;
-    createdAt?: string
-}
-
+import { Service } from "./servicesModel";
 // Načti všechny služby
 export async function loadServices(): Promise<Service[]> {
     const response = await fetch("/services");
