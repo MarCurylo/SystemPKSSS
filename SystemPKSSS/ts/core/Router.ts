@@ -1,5 +1,5 @@
 import { renderServicesTab, renderServiceDetail } from "../services/servicesView.js";
-// import { renderEntityTypesTab } from "../entityTypes/entityTypesView.js";
+import { renderEntityTypeTab } from "../entityTypes/entityTypesView.js";
 
 // Hlavní router funkce
 export function handleHashChange() {
@@ -21,10 +21,10 @@ export function handleHashChange() {
             // detail služby
             renderServiceDetail(id, container);
         }
-        // else if (subSection === "entitytypes") {
-        //     // entity types ve službě
-        //     renderEntityTypesTab(id, container);
-        // }
+        else if (subSection === "entitytypes") {
+            // entity types ve službě
+            renderEntityTypeTab(id, container);
+        }
         else {
             container.innerHTML = "<p>Neznámá podstránka služby.</p>";
         }

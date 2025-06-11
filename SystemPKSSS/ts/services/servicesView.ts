@@ -1,6 +1,6 @@
 import { loadServices, createService, updateService, deleteService } from './servicesApi.js';
 import { Service, NewService, UpdateService } from './servicesModel.js';
-// import { refreshEntityTypesList } from '../entityTypes/entityTypesView.js';
+import { renderEntityTypeTab } from '../entityTypes/entityTypesView.js';
 
 // Vstupní funkce pro zobrazení celé sekce služeb
 export function renderServicesTab(container: HTMLElement) {
@@ -216,7 +216,5 @@ export function renderServiceDetail(id: number, container: HTMLElement) {
         : 'Neznámé'}
         <h2>Typy entit pro službu: ${service.name}</h2><div id="entity-types-list"></div>
       <a href="#services#${service.id}#entitytypes" class="btn btn-secondary">Typy entit</a>`
-
-    // refreshEntityTypesList(service.id, container);
   });
 }

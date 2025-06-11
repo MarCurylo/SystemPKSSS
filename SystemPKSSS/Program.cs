@@ -14,8 +14,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 var app = builder.Build();
 
 //Frontend 
-app.UseDefaultFiles(); //index.html
-app.UseStaticFiles();  //
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.MapFallbackToFile("index.html");
 
 //endpointy
 app.MapServicesEndpoints();
