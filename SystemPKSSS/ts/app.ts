@@ -1,5 +1,5 @@
 import { renderServicesTab } from './services/servicesView.js';
-import { handleHashChange } from "./Router.js";
+import { handleHashChange } from "./core/Router.js";
 
 window.addEventListener("hashchange", handleHashChange);
 window.addEventListener("load", handleHashChange);
