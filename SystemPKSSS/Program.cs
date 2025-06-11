@@ -19,6 +19,7 @@ app.UseStaticFiles();  //
 
 //endpointy
 app.MapServicesEndpoints();
+app.MapEntityTypesEndpoints();
 // app.MapEntitiesEndpoints(); // další můžeš přidat postupně
 
 //Start

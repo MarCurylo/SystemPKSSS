@@ -34,8 +34,9 @@ public static class EntityTypesEndpoints
         app.MapGet("/services/{serviceId}/entityTypes", async (int serviceId, ApplicationDbContext db) =>
         {
             var entityTypes = await db.EntityTypes
-                                      .Where(et => et.ServiceId == serviceId)
-                                      .ToListAsync();
+    .Where(et => et.ServiceId == serviceId)
+    .AsNoTracking()
+    .ToListAsync();
             return Results.Ok(entityTypes);
         });
 

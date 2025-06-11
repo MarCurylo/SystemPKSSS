@@ -3,5 +3,5 @@ export interface Service {
     name: string;
     description: string;
     isActive: boolean;
-    createdAt?: string
+    createdAt?: string;
 }

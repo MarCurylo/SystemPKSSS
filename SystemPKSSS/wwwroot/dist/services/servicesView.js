@@ -1,5 +1,5 @@
-import { loadServices, createService, updateService } from './servicesApi.js';
-import { renderEntityTypesTab, renderEntityTypeForm } from "./entityTypes/entityTypes.js";
+import { loadServices, createService, updateService, deleteService } from './servicesApi.js';
+import { refreshEntityTypesList } from './entityTypes/entityTypesView.js';
 export function renderServicesTab(container) {
     var _a;
     container.innerHTML = `<h2>Seznam služeb</h2>
@@ -18,23 +18,35 @@ function refreshServicesList(container) {
         listContainer.innerHTML = "";
         services.forEach(service => {
             const item = document.createElement("div");
-            item.textContent = service.name;
-            // Tlačítko Zobrazit typy entit
-            const entityTypesButton = document.createElement("button");
-            entityTypesButton.textContent = "Zobrazit typy entit";
-            entityTypesButton.addEventListener("click", () => {
-                renderEntityTypesTab(service.id, container);
+            item.innerHTML = `<b>${service.name}</b> - ${service.isActive ? "Aktivní" : "Neaktivní"}
+        ${service.description ? `Popis služby: ${service.description}<br>` : ""} 
+        Vytvořeno: ${service.createdAt
+                ? new Date(service.createdAt).toLocaleString('cs-CZ')
+                : 'Neznámé'}<br>
+          
+        <hr>
+        <button data-id="${service.id}" class="edit-btn">Edit</button>
+        <button data-id="${service.id}" class="delete-btn">Smazat</button>`;
+            const entityTypesBtn = document.createElement("button");
+            entityTypesBtn.textContent = "Zobrazit typy entit";
+            entityTypesBtn.addEventListener("click", () => {
+                container.innerHTML = `<h2>Typy entit pro službu: ${service.name}</h2><div id="entity-types-list"></div>`;
+                refreshEntityTypesList(service.id, container);
             });
-            // Tlačítko Přidat typ entity
-            const addEntityTypeButton = document.createElement("button");
-            addEntityTypeButton.textContent = "Přidat typ entity";
-            addEntityTypeButton.addEventListener("click", () => {
-                renderEntityTypeForm(service.id, container);
-            });
-            item.appendChild(document.createElement("br"));
-            item.appendChild(entityTypesButton);
-            item.appendChild(addEntityTypeButton);
+            item.appendChild(entityTypesBtn);
             listContainer.appendChild(item);
+        });
+        document.querySelectorAll(".edit-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const id = parseInt(e.target.dataset.id);
+                renderServiceEditForm(id, container);
+            });
+        });
+        document.querySelectorAll(".delete-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const id = parseInt(e.target.dataset.id);
+                deleteService(id).then(() => refreshServicesList(container));
+            });
         });
     });
 }
