@@ -1,3 +1,6 @@
+import { renderServicesTab } from "./services/servicesView.js";
+import { loadServices } from "./services/servicesApi.js";
+import { refreshEntityTypesList } from "./services/entityTypes/entityTypesView.js";
 export function handleHashChange() {
     var _a, _b;
     const container = document.getElementById("main-container");
@@ -12,10 +15,7 @@ export function handleHashChange() {
         if (!id) {
             renderServicesTab(container);
         }
-        import { renderServicesTab } from "./services/servicesView.js";
-        import { loadServices } from "./services/servicesApi.js";
-        import { refreshEntityTypesList } from "./services/entityTypes/entityTypesView.js";
-        if (id && !subSection) {
+        else if (id && !subSection) {
             loadServices().then(services => {
                 var _a;
                 const service = services.find(s => s.id === id);
