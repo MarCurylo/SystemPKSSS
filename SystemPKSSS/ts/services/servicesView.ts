@@ -1,5 +1,6 @@
 import { loadServices, createService, updateService, deleteService,toggleServiceActivation } from './servicesApi.js';
 import { Service } from './servicesModel.js';
+import { renderEntityTypesTab, renderEntityTypeForm } from "./entityTypes/entityTypes.js";
 
 export function renderServicesTab(container: HTMLElement) {
   container.innerHTML = `<h2>Seznam služeb</h2>
@@ -13,42 +14,40 @@ export function renderServicesTab(container: HTMLElement) {
   refreshServicesList(container);
 }
 
+
 function refreshServicesList(container: HTMLElement) {
   const listContainer = document.getElementById("services-list");
-  
   if (!listContainer) return;
 
-  loadServices().then(services=> {
+  loadServices().then(services => {
     listContainer.innerHTML = "";
+
     services.forEach(service => {
       const item = document.createElement("div");
-        item.innerHTML = `<b>${service.name}</b> - ${service.isActive ? "Aktivní" : "Neaktivní"}
-        ${service.description ? `Popis služby: ${service.description}<br>` : ""} 
-        Vytvořeno: ${service.createdAt
-  ? new Date(service.createdAt as string).toLocaleString('cs-CZ')
-  : 'Neznámé'}<br>
-          
-        <hr>
-        <button data-id="${service.id}" class="edit-btn">Edit</button>
-        <button data-id="${service.id}" class="delete-btn">Smazat</button>`;
+      item.textContent = service.name;
+
+      // Tlačítko Zobrazit typy entit
+      const entityTypesButton = document.createElement("button");
+      entityTypesButton.textContent = "Zobrazit typy entit";
+      entityTypesButton.addEventListener("click", () => {
+        renderEntityTypesTab(service.id, container);
+      });
+
+      // Tlačítko Přidat typ entity
+      const addEntityTypeButton = document.createElement("button");
+      addEntityTypeButton.textContent = "Přidat typ entity";
+      addEntityTypeButton.addEventListener("click", () => {
+        renderEntityTypeForm(service.id, container);
+      });
+
+      item.appendChild(document.createElement("br"));
+      item.appendChild(entityTypesButton);
+      item.appendChild(addEntityTypeButton);
       listContainer.appendChild(item);
-    });
-
-    document.querySelectorAll(".edit-btn").forEach(btn => {
-      btn.addEventListener("click", (e: any) => {
-        const id = parseInt(e.target.dataset.id);
-        renderServiceEditForm(id, container);
-      });
-    });
-
-    document.querySelectorAll(".delete-btn").forEach(btn => {
-      btn.addEventListener("click", (e: any) => {
-        const id = parseInt(e.target.dataset.id);
-        deleteService(id).then(() => refreshServicesList(container));
-      });
     });
   });
 }
+
 
 function renderServiceForm(container: HTMLElement) {
   container.innerHTML = `
