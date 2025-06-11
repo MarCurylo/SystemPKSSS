@@ -1,4 +1,4 @@
-import { renderServicesTab } from './services/servicesView.js';
+import { renderServicesTab } from './servicesView.js';
 
 function loadApp() {
   const container = document.getElementById('main-container');

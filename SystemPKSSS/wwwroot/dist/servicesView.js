@@ -1,4 +1,4 @@
-import { loadServices, createService, updateService, deleteService } from './services.js';
+import { loadServices, createService, updateService, deleteService } from './servicesService.js';
 export function renderServicesTab(container) {
     var _a;
     container.innerHTML = `<h2>Seznam služeb</h2>
@@ -18,7 +18,12 @@ function refreshServicesList(container) {
         services.forEach(service => {
             const item = document.createElement("div");
             item.innerHTML = `<b>${service.name}</b> - ${service.isActive ? "Aktivní" : "Neaktivní"}
-        Vytvořeno: ${new Date(service.createdAt).toLocaleString('cs-CZ')}<br>
+        ${service.description ? `Popis služby: ${service.description}<br>` : ""} 
+        Vytvořeno: ${service.createdAt
+                ? new Date(service.createdAt).toLocaleString('cs-CZ')
+                : 'Neznámé'}<br>
+          
+        <hr>
         <button data-id="${service.id}" class="edit-btn">Edit</button>
         <button data-id="${service.id}" class="delete-btn">Smazat</button>`;
             listContainer.appendChild(item);
@@ -46,11 +51,15 @@ function renderServiceForm(container) {
           <label>Aktivní: <input type="checkbox" id="service-active" "checked" : ""}></label><br>
     <button id="save-service-button">Uložit</button>`;
     (_a = document.getElementById("save-service-button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-        debugger;
         const name = document.getElementById("service-name").value;
         const description = document.getElementById("service-description").value;
         const isActive = document.getElementById("service-active").checked;
-        createService(name, description, isActive).then(() => renderServicesTab(container));
+        const newService = {
+            name,
+            description,
+            isActive,
+        };
+        createService(newService).then(() => renderServicesTab(container));
     });
 }
 function renderServiceEditForm(id, container) {
@@ -69,7 +78,13 @@ function renderServiceEditForm(id, container) {
             const name = document.getElementById("service-name").value;
             const description = document.getElementById("service-description").value;
             const isActive = document.getElementById("service-active").checked;
-            updateService(id, name, description, isActive).then(() => renderServicesTab(container));
+            const editedService = {
+                id,
+                name,
+                description,
+                isActive
+            };
+            updateService(editedService).then(() => renderServicesTab(container));
         });
     });
 }

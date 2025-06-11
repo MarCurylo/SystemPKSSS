@@ -1,1 +1,1 @@
-{"root":["../ts/app.ts","../ts/services.ts","../ts/servicesview.ts"],"version":"5.8.3"}
+{"root":["../ts/app.ts","../ts/entitytypesservice.ts","../ts/entitytypesview.ts","../ts/servicesservice.ts","../ts/servicesview.ts"],"version":"5.8.3"}
