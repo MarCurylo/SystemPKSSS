@@ -1,4 +1,4 @@
-import { Service } from "./servicesModel";
+import { Service } from "./servicesModel.js";
 // Načti všechny služby
 export async function loadServices(): Promise<Service[]> {
     const response = await fetch("/services");
