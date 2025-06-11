@@ -16,29 +16,28 @@ export function renderServicesTab(container: HTMLElement) {
 
 function refreshServicesList(container: HTMLElement) {
   const listContainer = document.getElementById("services-list");
-  
   if (!listContainer) return;
 
-  loadServices().then(services=> {
+  loadServices().then(services => {
     listContainer.innerHTML = "";
+
     services.forEach(service => {
       const item = document.createElement("div");
-        item.innerHTML = `<b>${service.name}</b> - ${service.isActive ? "Aktivní" : "Neaktivní"}
+
+      item.innerHTML = `
+        <b>${service.name}</b> - ${service.isActive ? "Aktivní" : "Neaktivní"}
         ${service.description ? `Popis služby: ${service.description}<br>` : ""} 
         Vytvořeno: ${service.createdAt
-  ? new Date(service.createdAt as string).toLocaleString('cs-CZ')
-  : 'Neznámé'}<br>
-          
-        <hr>
+          ? new Date(service.createdAt as string).toLocaleString('cs-CZ')
+          : 'Neznámé'}<br>
+
         <button data-id="${service.id}" class="edit-btn">Edit</button>
-        <button data-id="${service.id}" class="delete-btn">Smazat</button>`;
-           const entityTypesBtn = document.createElement("button");
-      entityTypesBtn.textContent = "Zobrazit typy entit";
-      entityTypesBtn.addEventListener("click", () => {
-        container.innerHTML = `<h2>Typy entit pro službu: ${service.name}</h2><div id="entity-types-list"></div>`;
-        refreshEntityTypesList(service.id, container);
-      });
-      item.appendChild(entityTypesBtn);
+        <button data-id="${service.id}" class="delete-btn">Smazat</button>
+        <button data-id="${service.id}" class="detail-btn">Detail Sluzby</button>
+        <button data-id="${service.id}" class="entitytypes-btn">Zobrazit typy entit</button>
+        <hr>
+      `;
+
       listContainer.appendChild(item);
     });
 
@@ -53,6 +52,37 @@ function refreshServicesList(container: HTMLElement) {
       btn.addEventListener("click", (e: any) => {
         const id = parseInt(e.target.dataset.id);
         deleteService(id).then(() => refreshServicesList(container));
+      });
+    });
+
+    document.querySelectorAll(".entitytypes-btn").forEach(btn => {
+      btn.addEventListener("click", (e: any) => {
+        const id = parseInt(e.target.dataset.id);
+        const service = services.find(s => s.id === id);
+        if (service) {
+          container.innerHTML = `<h2>Typy entit pro službu: ${service.name}</h2><div id="entity-types-list"></div>`;
+          refreshEntityTypesList(service.id, container);
+        }
+      });
+    });
+        document.querySelectorAll(".detail-btn").forEach(btn => {
+      btn.addEventListener("click", (e: any) => {
+        const id = parseInt(e.target.dataset.id);
+        const service = services.find(s => s.id === id);
+        if (service) {
+          window.location.hash = `services#${id}`;
+          container.innerHTML = 
+          `<h2>Jmeno sluzby: ${service.name}</h2>
+          <h5>Co je v teto sluzbe:</h3>
+          <div id="entity-types-list"></div>
+          <h5>Kdy byla sluzba zalozena</h5>
+          ${service.createdAt
+          ? new Date(service.createdAt as string).toLocaleString('cs-CZ')
+          : 'Neznámé'}<hr>
+          ${service.description ? `Popis služby: ${service.description}<br>` : ""} 
+          `;
+          refreshEntityTypesList(service.id, container);
+        }
       });
     });
   });

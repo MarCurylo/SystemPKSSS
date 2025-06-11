@@ -1,4 +1,8 @@
 import { renderServicesTab } from './services/servicesView.js';
+import { handleHashChange } from "./Router.js";
+
+window.addEventListener("hashchange", handleHashChange);
+window.addEventListener("load", handleHashChange);
 
 function loadApp() {
   const container = document.getElementById('main-container');

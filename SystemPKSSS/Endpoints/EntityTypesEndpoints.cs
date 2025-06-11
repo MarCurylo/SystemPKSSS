@@ -54,7 +54,7 @@ public static class EntityTypesEndpoints
             if (entityType is null) return Results.NotFound();
             entityType.Name = updatedEntityType.Name;
             entityType.Description = updatedEntityType.Description;
-            entityType.IsVisible = updatedEntityType.IsVisible;
+            entityType.Visible = updatedEntityType.Visible;
 
             await db.SaveChangesAsync();
             return Results.Ok(entityType);
@@ -65,7 +65,7 @@ public static class EntityTypesEndpoints
         {
             var entityType = await db.EntityTypes.FindAsync(id);
             if (entityType is null) return Results.NotFound();
-            entityType.IsVisible = visible;
+            entityType.Visible = visible;
             await db.SaveChangesAsync();
             return Results.Ok(entityType);
         });

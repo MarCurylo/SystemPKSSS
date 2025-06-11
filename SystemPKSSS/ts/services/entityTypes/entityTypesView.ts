@@ -3,7 +3,6 @@ import { EntityType } from './entityTypesModel.js';
 
 export function refreshEntityTypesList(serviceId: number, container: HTMLElement) {
     console.log("serviceId", serviceId);
-    debugger
   const listContainer = document.getElementById("entity-types-list");
   
   if (!listContainer) return;

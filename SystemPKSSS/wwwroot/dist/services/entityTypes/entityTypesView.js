@@ -1,7 +1,6 @@
 import { loadEntityTypesByService } from "./entityTypesApi.js";
 export function refreshEntityTypesList(serviceId, container) {
     console.log("serviceId", serviceId);
-    debugger;
     const listContainer = document.getElementById("entity-types-list");
     if (!listContainer)
         return;
