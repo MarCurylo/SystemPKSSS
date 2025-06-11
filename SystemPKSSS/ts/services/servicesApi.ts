@@ -1,4 +1,4 @@
-import { Service } from "./servicesModel";
+import { Service, NewService, UpdateService } from "./servicesModel";
 // Načti všechny služby
 export async function loadServices(): Promise<Service[]> {
     const response = await fetch("/services");
@@ -9,7 +9,7 @@ export async function loadServices(): Promise<Service[]> {
 }
 
 // Vytvoř novou službu
-export async function createService(service: Service): Promise<Service> {
+export async function createService(service: NewService): Promise<Service> {
     const response = await fetch("/services", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
@@ -19,7 +19,7 @@ export async function createService(service: Service): Promise<Service> {
 }
 
 // Update existující služby
-export async function updateService(service: Service): Promise<Service> {
+export async function updateService(service: UpdateService): Promise<Service> {
     if (!service.id) {
         throw new Error("Service ID is required for update");
     }

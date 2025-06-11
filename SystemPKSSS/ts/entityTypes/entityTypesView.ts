@@ -1,5 +1,4 @@
 import { loadEntityTypesByService } from "./entityTypesApi.js";
-import { EntityType } from './entityTypesModel.js';
 
 export function refreshEntityTypesList(serviceId: number, container: HTMLElement) {
     console.log("serviceId", serviceId);
