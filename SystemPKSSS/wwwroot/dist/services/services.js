@@ -7,37 +7,48 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+// Načti všechny služby
 export function loadServices() {
     return __awaiter(this, void 0, void 0, function* () {
-        const response = yield fetch('/services');
+        const response = yield fetch("/services");
+        if (!response.ok) {
+            throw new Error("Failed to fetch services");
+        }
         return yield response.json();
     });
 }
-export function createService(name, description, isActive) {
+// Vytvoř novou službu
+export function createService(service) {
     return __awaiter(this, void 0, void 0, function* () {
-        const response = yield fetch('/services', {
-            method: 'POST',
+        const response = yield fetch("/services", {
+            method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, description, isActive })
+            body: JSON.stringify(service)
         });
         return yield response.json();
     });
 }
-export function updateService(id, name, description, isActive) {
+// Update existující služby
+export function updateService(service) {
     return __awaiter(this, void 0, void 0, function* () {
-        const response = yield fetch(`/services/${id}`, {
+        if (!service.id) {
+            throw new Error("Service ID is required for update");
+        }
+        const response = yield fetch(`/services/${service.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, name, description, isActive })
+            body: JSON.stringify(service)
         });
         return yield response.json();
     });
 }
+// Smazání služby
 export function deleteService(id) {
     return __awaiter(this, void 0, void 0, function* () {
         yield fetch(`/services/${id}`, { method: 'DELETE' });
     });
 }
+// Aktivace / deaktivace služby
 export function toggleServiceActivation(id, activate) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch(`/services/${id}/activate?activate=${activate}`, { method: 'PUT' });
