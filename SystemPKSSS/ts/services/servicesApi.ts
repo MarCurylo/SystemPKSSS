@@ -33,9 +33,14 @@ export async function updateService(service: UpdateService): Promise<Service> {
 }
 
 // Smazání služby
-export async function deleteService(id: number) {
-    await fetch(`/services/${id}`, { method: 'DELETE' });
+export async function deleteService(service: Service) {
+    if (!service.id) {
+        throw new Error("Service ID is required for delete");
+    }
+
+    await fetch(`/services/${service.id}`, { method: 'DELETE' });
 }
+
 
 // Aktivace / deaktivace služby
 export async function toggleServiceActivation(id: number, activate: boolean): Promise<Service> {

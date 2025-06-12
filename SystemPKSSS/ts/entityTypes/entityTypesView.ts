@@ -39,6 +39,7 @@ export function refreshEntityTypesList(serviceId: number) {
 
           <button data-id="${entityType.id}" class="edit-btn">Edit</button>
           <button data-id="${entityType.id}" class="delete-btn">Smazat</button>
+          <button data-id="${entityType.id}" class="detail-btn">Detail Entity</button>
           <div id="editor-${entityType.id}" class="inline-editor"></div>
           <div id="delete-${entityType.id}" class="inline-delete"></div>
         </div>
@@ -60,6 +61,12 @@ export function refreshEntityTypesList(serviceId: number) {
         } else {
           renderEntityTypeEditForm(serviceId, id);
         }
+      });
+    });
+         document.querySelectorAll(".detail-btn").forEach(btn => {
+      btn.addEventListener("click", (e: any) => {
+        const id = parseInt(e.target.dataset.id);
+        window.location.hash = `#services#${serviceId}#entitytypes#${id}`;
       });
     });
 
@@ -172,7 +179,7 @@ function renderEntityTypeDeleteForm(serviceId: number, id: number) {
     `;
 
     document.getElementById(`delete-button-${id}`)?.addEventListener("click", () => {
-      deleteEntityType(id).then(() => {
+      deleteEntityType(entityType).then(() => {
         refreshEntityTypesList(serviceId);
       });
     });
@@ -180,5 +187,23 @@ function renderEntityTypeDeleteForm(serviceId: number, id: number) {
     document.getElementById(`cancel-delete-button-${id}`)?.addEventListener("click", () => {
       deleteContainer.innerHTML = "";
     });
+  });
+}
+// Detail služby (pro router)
+export function renderEntityTypeDetail(id: number, container: HTMLElement) {
+  loadEntityTypes().then(entityTypes => {
+    const entityType = entityTypes.find(e => e.id === id);
+    if (!entityType) {
+      container.innerHTML = "<p>Typ Entity nenalezen.</p>";
+      return;
+    }
+
+    container.innerHTML = `
+      <h2>Jméno typu Entity: ${entityType.name}</h2>
+      <h5>Popis:</h5>${entityType.description ?? "Nezadán"}
+      <h5>Datum založení:</h5>${entityType.createdAt 
+        ? new Date(entityType.createdAt as string).toLocaleString('cs-CZ')
+        : 'Neznámé'}
+      <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}" class="btn btn-secondary">Typy entit</a>`
   });
 }

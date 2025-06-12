@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using SystemPKSSS.Models;
 
-namespace SystemPKSSS.Models
-{
+namespace SystemPKSSS.Models;
+
     public class AttributeDefinition
     {
         [Key]
@@ -21,6 +21,6 @@ namespace SystemPKSSS.Models
         public string AttributeType { get; set; }
         public bool IsRequired { get; set; }
         public int OrderIndex {  get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
     }
-}
+

@@ -166,7 +166,7 @@ function renderServiceDeleteForm(id) {
       <button id="cancel-delete-button-${id}">Zrušit</button>
     `;
         (_a = document.getElementById(`delete-button-${id}`)) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-            deleteService(service.id).then(() => {
+            deleteService(service).then(() => {
                 refreshServicesList();
             });
         });

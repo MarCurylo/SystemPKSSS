@@ -43,9 +43,12 @@ export function updateService(service) {
     });
 }
 // Smazání služby
-export function deleteService(id) {
+export function deleteService(service) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield fetch(`/services/${id}`, { method: 'DELETE' });
+        if (!service.id) {
+            throw new Error("Service ID is required for delete");
+        }
+        yield fetch(`/services/${service.id}`, { method: 'DELETE' });
     });
 }
 // Aktivace / deaktivace služby

@@ -52,8 +52,12 @@ export async function updateEntityType(serviceId: number, entityType: UpdateEnti
 }
 
 // Smazání druhu entity
-export async function deleteEntityType(id: number): Promise<void> {
-    const response = await fetch(`/entitytypes/${id}`, { method: "DELETE" });
+export async function deleteEntityType(entityType: UpdateEntityType): Promise<void> {
+    if (!entityType.id) {
+        throw new Error("EntityType ID is required for delete");
+    }
+
+    const response = await fetch(`/entityTypes/${entityType.id}`, { method: "DELETE" });
 
     if (!response.ok) {
         throw new Error("Failed to delete entity type");

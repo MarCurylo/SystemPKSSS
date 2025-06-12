@@ -59,9 +59,12 @@ export function updateEntityType(serviceId, entityType) {
     });
 }
 // Smazání druhu entity
-export function deleteEntityType(id) {
+export function deleteEntityType(entityType) {
     return __awaiter(this, void 0, void 0, function* () {
-        const response = yield fetch(`/entitytypes/${id}`, { method: "DELETE" });
+        if (!entityType.id) {
+            throw new Error("EntityType ID is required for delete");
+        }
+        const response = yield fetch(`/entityTypes/${entityType.id}`, { method: "DELETE" });
         if (!response.ok) {
             throw new Error("Failed to delete entity type");
         }

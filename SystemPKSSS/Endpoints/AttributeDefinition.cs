@@ -4,9 +4,9 @@ using SystemPKSSSS.Data;
 
 namespace SystemPKSSSS.Endpoints;
 
-public static class EntityTypesEndpoints
+public static class AttributeDefinition
 {
-    public static void MapEntityTypesEndpoints(this IEndpointRouteBuilder app)
+    public static void MapAttributeDefinitionsEndpoints(this IEndpointRouteBuilder app)
     {
         // Vytvoření typu entity
 app.MapPost("/services/{serviceId}/entityTypes", async (int serviceId, EntityType entityType, ApplicationDbContext db) =>

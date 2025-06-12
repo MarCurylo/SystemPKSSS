@@ -186,7 +186,7 @@ function renderServiceDeleteForm(id: number) {
     `;
 
     document.getElementById(`delete-button-${id}`)?.addEventListener("click", () => {
-      deleteService(service.id).then(() => {
+      deleteService(service).then(() => {
         refreshServicesList();
       });
     });

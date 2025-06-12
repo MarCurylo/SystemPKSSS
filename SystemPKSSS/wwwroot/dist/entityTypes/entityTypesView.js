@@ -1,4 +1,4 @@
-import { createEntityType, deleteEntityType, loadEntityTypesByService, updateEntityType } from './entityTypesApi.js';
+import { loadEntityTypes, createEntityType, deleteEntityType, loadEntityTypesByService, updateEntityType } from './entityTypesApi.js';
 // Vstupní funkce pro zobrazeni rozhrani pro entity
 export function renderEntityTypeTab(serviceId, container) {
     var _a;
@@ -33,6 +33,7 @@ export function refreshEntityTypesList(serviceId) {
 
           <button data-id="${entityType.id}" class="edit-btn">Edit</button>
           <button data-id="${entityType.id}" class="delete-btn">Smazat</button>
+          <button data-id="${entityType.id}" class="detail-btn">Detail Entity</button>
           <div id="editor-${entityType.id}" class="inline-editor"></div>
           <div id="delete-${entityType.id}" class="inline-delete"></div>
         </div>
@@ -53,6 +54,12 @@ export function refreshEntityTypesList(serviceId) {
                 else {
                     renderEntityTypeEditForm(serviceId, id);
                 }
+            });
+        });
+        document.querySelectorAll(".detail-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const id = parseInt(e.target.dataset.id);
+                window.location.hash = `#services#${serviceId}#entitytypes#${id}`;
             });
         });
         document.querySelectorAll(".delete-btn").forEach(btn => {
@@ -155,12 +162,30 @@ function renderEntityTypeDeleteForm(serviceId, id) {
       <button id="cancel-delete-button-${id}">Zrušit</button>
     `;
         (_a = document.getElementById(`delete-button-${id}`)) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-            deleteEntityType(id).then(() => {
+            deleteEntityType(entityType).then(() => {
                 refreshEntityTypesList(serviceId);
             });
         });
         (_b = document.getElementById(`cancel-delete-button-${id}`)) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => {
             deleteContainer.innerHTML = "";
         });
+    });
+}
+// Detail služby (pro router)
+export function renderEntityTypeDetail(id, container) {
+    loadEntityTypes().then(entityTypes => {
+        var _a;
+        const entityType = entityTypes.find(e => e.id === id);
+        if (!entityType) {
+            container.innerHTML = "<p>Typ Entity nenalezen.</p>";
+            return;
+        }
+        container.innerHTML = `
+      <h2>Jméno typu Entity: ${entityType.name}</h2>
+      <h5>Popis:</h5>${(_a = entityType.description) !== null && _a !== void 0 ? _a : "Nezadán"}
+      <h5>Datum založení:</h5>${entityType.createdAt
+            ? new Date(entityType.createdAt).toLocaleString('cs-CZ')
+            : 'Neznámé'}
+      <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}" class="btn btn-secondary">Typy entit</a>`;
     });
 }
