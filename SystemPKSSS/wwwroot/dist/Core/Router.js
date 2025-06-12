@@ -14,14 +14,19 @@ export function handleHashChange() {
     if (section === "services") {
         if (!id) {
             // seznam všech služeb
+            console.log("Hash:", window.location.hash);
+            console.log("Parts:", parts);
             renderServicesTab(container);
         }
         else if (id && !subSection) {
             // detail služby
+            console.log("Hash:", window.location.hash);
+            console.log("Parts:", parts);
             renderServiceDetail(id, container);
         }
         else if (subSection === "entitytypes") {
-            // entity types ve službě
+            console.log("Hash:", window.location.hash);
+            console.log("Parts:", parts);
             renderEntityTypeTab(id, container);
         }
         else {
@@ -35,4 +40,3 @@ export function handleHashChange() {
 // Registrace listenerů
 window.addEventListener("hashchange", handleHashChange);
 window.addEventListener("load", handleHashChange);
-//# sourceMappingURL=Router.js.map

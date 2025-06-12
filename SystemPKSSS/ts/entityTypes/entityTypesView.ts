@@ -21,11 +21,12 @@ export function renderEntityTypeTab(serviceId: number, container: HTMLElement) {
 export function refreshEntityTypesList(serviceId: number) {
   const listContainer = document.getElementById("entityType-list");
   if (!listContainer) return;
-
+  
   loadEntityTypesByService(serviceId).then(entityTypes => {
     listContainer.innerHTML = "";
-
+    
     entityTypes.forEach(entityType => {
+      console.log("Loaded entity types:", entityTypes);
       const item = document.createElement("div");
 
       item.innerHTML = `
@@ -95,7 +96,16 @@ function renderEntityTypeForm(serviceId: number) {
     const name = (document.getElementById("entityType-name") as HTMLInputElement).value;
     const description = (document.getElementById("entityType-description") as HTMLTextAreaElement).value;
 
-    const newEntityType: NewEntityType = { name, description, serviceId };
+  const newEntityType: NewEntityType = { 
+  name, 
+  description, 
+  serviceId,
+  visible: true,
+  editable: true,
+  exportable: true,
+  auditable: true
+};
+
 
     createEntityType(serviceId, newEntityType).then(() => {
       refreshEntityTypesList(serviceId);
@@ -129,7 +139,10 @@ function renderEntityTypeEditForm(serviceId: number, id: number) {
       const name = (document.getElementById(`edit-name-${id}`) as HTMLInputElement).value;
       const description = (document.getElementById(`edit-description-${id}`) as HTMLTextAreaElement).value;
 
-      const updatedEntityType: UpdateEntityType = { id, serviceId, name, description };
+      const updatedEntityType: UpdateEntityType = { id, serviceId, name, description,  visible: true,
+  editable: true,
+  exportable: true,
+  auditable: true };
 
       updateEntityType(serviceId, updatedEntityType).then(() => {
         refreshEntityTypesList(serviceId);

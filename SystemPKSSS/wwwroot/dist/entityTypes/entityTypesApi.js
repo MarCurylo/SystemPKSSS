@@ -67,4 +67,3 @@ export function deleteEntityType(id) {
         }
     });
 }
-//# sourceMappingURL=entityTypesApi.js.map

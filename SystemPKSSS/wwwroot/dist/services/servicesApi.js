@@ -55,4 +55,3 @@ export function toggleServiceActivation(id, activate) {
         return yield response.json();
     });
 }
-//# sourceMappingURL=servicesApi.js.map

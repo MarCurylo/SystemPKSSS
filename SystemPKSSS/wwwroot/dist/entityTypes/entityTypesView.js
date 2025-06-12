@@ -21,6 +21,7 @@ export function refreshEntityTypesList(serviceId) {
     loadEntityTypesByService(serviceId).then(entityTypes => {
         listContainer.innerHTML = "";
         entityTypes.forEach(entityType => {
+            console.log("Loaded entity types:", entityTypes);
             const item = document.createElement("div");
             item.innerHTML = `
         <div>
@@ -86,7 +87,15 @@ function renderEntityTypeForm(serviceId) {
     (_a = document.getElementById("save-entityType-button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
         const name = document.getElementById("entityType-name").value;
         const description = document.getElementById("entityType-description").value;
-        const newEntityType = { name, description, serviceId };
+        const newEntityType = {
+            name,
+            description,
+            serviceId,
+            visible: true,
+            editable: true,
+            exportable: true,
+            auditable: true
+        };
         createEntityType(serviceId, newEntityType).then(() => {
             refreshEntityTypesList(serviceId);
             editorContainer.innerHTML = "";
@@ -116,7 +125,10 @@ function renderEntityTypeEditForm(serviceId, id) {
         (_b = document.getElementById(`save-edit-button-${id}`)) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => {
             const name = document.getElementById(`edit-name-${id}`).value;
             const description = document.getElementById(`edit-description-${id}`).value;
-            const updatedEntityType = { id, serviceId, name, description };
+            const updatedEntityType = { id, serviceId, name, description, visible: true,
+                editable: true,
+                exportable: true,
+                auditable: true };
             updateEntityType(serviceId, updatedEntityType).then(() => {
                 refreshEntityTypesList(serviceId);
             });
@@ -152,4 +164,3 @@ function renderEntityTypeDeleteForm(serviceId, id) {
         });
     });
 }
-//# sourceMappingURL=entityTypesView.js.map

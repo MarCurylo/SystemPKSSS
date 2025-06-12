@@ -194,4 +194,3 @@ export function renderServiceDetail(id, container) {
       <a href="#services#${service.id}#entitytypes" class="btn btn-secondary">Typy entit</a>`;
     });
 }
-//# sourceMappingURL=servicesView.js.map

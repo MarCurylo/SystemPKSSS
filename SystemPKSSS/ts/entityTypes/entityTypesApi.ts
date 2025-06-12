@@ -1,4 +1,4 @@
-import { EntityType, NewEntityType, UpdateEntityType } from "./entityTypesModel";
+import { EntityType, NewEntityType, UpdateEntityType } from "./entityTypesModel.js";
 // Načti všechny druhy entit
 export async function loadEntityTypes(): Promise<EntityType[]> {
     const response = await fetch("/entitytypes");

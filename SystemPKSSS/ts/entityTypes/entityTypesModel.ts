@@ -1,13 +1,14 @@
 export interface EntityType {
   id: number;
   serviceId: number;
-  name: string;
+  name?: string;
   description?: string;
+  visible: boolean;
+  editable: boolean;
+  exportable: boolean;
+  auditable: boolean;
   createdAt: string;
 }
 
-// Vytvareni
 export type NewEntityType = Omit<EntityType, 'id' | 'createdAt'>;
-
-// Update
 export type UpdateEntityType = Omit<EntityType, 'createdAt'>;

@@ -9,19 +9,23 @@ public static class EntityTypesEndpoints
     public static void MapEntityTypesEndpoints(this IEndpointRouteBuilder app)
     {
         // Vytvoření typu entity
-        app.MapPost("/entityTypes", async (EntityType entityType, ApplicationDbContext db) =>
-        {
-            // Validace existence služby
-            var serviceExists = await db.Services.AnyAsync(s => s.Id == entityType.ServiceId);
-            if (!serviceExists)
-            {
-                return Results.BadRequest($"Entity with ID {entityType.ServiceId} does not exist.");
-            }
+app.MapPost("/services/{serviceId}/entityTypes", async (int serviceId, EntityType entityType, ApplicationDbContext db) =>
+{
+    // Validace existence služby
+    var serviceExists = await db.Services.AnyAsync(s => s.Id == serviceId);
+    if (!serviceExists)
+    {
+        return Results.BadRequest($"Service with ID {serviceId} does not exist.");
+    }
 
-            db.EntityTypes.Add(entityType);
-            await db.SaveChangesAsync();
-            return Results.Created($"/entityTypes/{entityType.Id}", entityType);
-        });
+    // Přepíšeme raději i případný pokus o podvodné ServiceId v těle
+    entityType.ServiceId = serviceId;
+
+    db.EntityTypes.Add(entityType);
+    await db.SaveChangesAsync();
+    return Results.Created($"/entityTypes/{entityType.Id}", entityType);
+});
+
 
         // Výpis všech typu entit
         app.MapGet("/entityTypes", async (ApplicationDbContext db) =>
@@ -48,17 +52,24 @@ public static class EntityTypesEndpoints
         });
 
         // Editace typu entity
-        app.MapPut("/entityTypes/{id}", async (int id, EntityType updatedEntityType, ApplicationDbContext db) =>
-        {
-            var entityType = await db.EntityTypes.FindAsync(id);
-            if (entityType is null) return Results.NotFound();
-            entityType.Name = updatedEntityType.Name;
-            entityType.Description = updatedEntityType.Description;
-            entityType.Visible = updatedEntityType.Visible;
+app.MapPut("/services/{serviceId}/entityTypes/{entityTypeId}", 
+    async (int serviceId, int entityTypeId, EntityType updatedEntityType, ApplicationDbContext db) =>
+{
+    var entityType = await db.EntityTypes.FindAsync(entityTypeId);
+    if (entityType is null || entityType.ServiceId != serviceId)
+        return Results.NotFound();
 
-            await db.SaveChangesAsync();
-            return Results.Ok(entityType);
-        });
+    entityType.Name = updatedEntityType.Name;
+    entityType.Description = updatedEntityType.Description;
+    entityType.Visible = updatedEntityType.Visible;
+    entityType.Editable = updatedEntityType.Editable;
+    entityType.Exportable = updatedEntityType.Exportable;
+    entityType.Auditable = updatedEntityType.Auditable;
+
+    await db.SaveChangesAsync();
+    return Results.Ok(entityType);
+});
+
 
         // Nastavení visibility
         app.MapPut("/entityTypes/{id}/visible", async (int id, bool visible, ApplicationDbContext db) =>
