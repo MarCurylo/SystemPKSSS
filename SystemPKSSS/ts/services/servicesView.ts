@@ -2,9 +2,12 @@ import { loadServices, createService, updateService, deleteService } from './ser
 import { Service, NewService, UpdateService } from './servicesModel.js';
 import { renderEntityTypeTab } from '../entityTypes/entityTypesView.js';
 
+
+
 // Vstupní funkce pro zobrazení celé sekce služeb
 export function renderServicesTab(container: HTMLElement) {
-  container.innerHTML = `
+  container.innerHTML = //html
+  `
     <h2>Seznam služeb</h2>
     <div id="services-list"></div>
     <div id="new-service-editor"></div>

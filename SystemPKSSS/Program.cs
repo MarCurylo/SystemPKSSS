@@ -21,7 +21,7 @@ app.MapFallbackToFile("index.html");
 //endpointy
 app.MapServicesEndpoints();
 app.MapEntityTypesEndpoints();
-// app.MapEntitiesEndpoints(); // další můžeš přidat postupně
+app.MapAttributeDefinitionsEndpoints();
 
 //Start
 app.Run();
