@@ -6,21 +6,35 @@ using System.ComponentModel.DataAnnotations.Schema;
 using SystemPKSSS.Models;
 
 namespace SystemPKSSS.Models;
+public enum AttributeDataType
+{
+    String,
+    Number,
+    Date,
+    Boolean,
+    Enum,
+    File,
+    Image
+}
 
-    public class AttributeDefinition
-    {
-        [Key]
-        public int Id { get; set; }
 
-        public int EntityTypeId { get; set; }
+public class AttributeDefinition
+{
+    
+    [Key]
+    public int Id { get; set; }
 
-        public EntityType EntityType { get; set; }
+    public int EntityTypeId { get; set; }
 
-        public string Name {  get; set; }
-        public string DisplayName {  get; set; }
-        public string AttributeType { get; set; }
-        public bool IsRequired { get; set; }
-        public int OrderIndex {  get; set; }
-        public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
+    public EntityType EntityType { get; set; }
+
+    public string Name { get; set; }
+    public string DisplayName { get; set; }
+    public AttributeDataType  AttributeType { get; set; }
+    public bool IsRequired { get; set; }
+    public int OrderIndex { get; set; }
+    public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
+    public ICollection<AttributeEnumValue> EnumValues { get; set; } = new List<AttributeEnumValue>();
+
     }
 

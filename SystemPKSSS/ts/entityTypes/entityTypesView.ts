@@ -204,6 +204,6 @@ export function renderEntityTypeDetail(id: number, container: HTMLElement) {
       <h5>Datum založení:</h5>${entityType.createdAt 
         ? new Date(entityType.createdAt as string).toLocaleString('cs-CZ')
         : 'Neznámé'}
-      <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}" class="btn btn-secondary">Typy entit</a>`
+      <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#attributeDefinition" class="btn btn-secondary">Atributy sluzby</a>`
   });
 }

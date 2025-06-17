@@ -2,7 +2,8 @@ import { loadServices, createService, updateService, deleteService } from './ser
 // Vstupní funkce pro zobrazení celé sekce služeb
 export function renderServicesTab(container) {
     var _a;
-    container.innerHTML = `
+    container.innerHTML = //html
+        `
     <h2>Seznam služeb</h2>
     <div id="services-list"></div>
     <div id="new-service-editor"></div>
