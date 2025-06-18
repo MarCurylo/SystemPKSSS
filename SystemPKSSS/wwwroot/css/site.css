@@ -1,0 +1,159 @@
+body{background: rgba(247, 241, 232, 0.9);}
+/* === Glassy sidebar panel === */
+
+#nav-container {
+  background: rgba(247, 241, 232, 3); /* jemně krémová, glassy */
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  border: 1px solid rgba(255,255,255,0.23);
+  padding: 2rem 1rem 1.5rem 1rem;
+  margin: 1.2rem 0.6rem;
+  min-width: 260px;
+  min-height: 100vh;
+  transition: box-shadow 0.3s;
+}
+
+#nav-container .fs-5 {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #222;
+}
+
+#nav-container .border-bottom {
+  border-bottom: 1px solid rgba(160,150,130,0.14) !important;
+}
+
+/* === Navigation list === */
+#nav-container ul {
+  padding-left: 0;
+}
+
+#nav-container li {
+  list-style: none;
+  margin-bottom: 0.5rem;
+}
+
+/* Odkaz na sekci ("Služby", atd.) */
+#nav-container .nav-link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-size: 1.08rem;
+  color: #3a2f20;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  border-radius: 0.75rem;
+  padding: 0.6rem 1rem;
+  transition: background 0.15s, color 0.13s;
+  cursor: pointer;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Zvýraznění při hoveru/focusu/aktivním */
+#nav-container .nav-link:hover,
+#nav-container .nav-link.active {
+  background: rgba(224, 194, 121, 0.13);
+  color: #b58116;
+}
+
+#nav-container .mb-1.d-flex {
+  gap: 0.4em;
+}
+
+/* Tlačítko pro rozkliknutí (šipka) */
+#nav-container .btn-toggle {
+  background: transparent;
+  border: none;
+  outline: none;
+  border-radius: 0.75rem;
+  padding: 0.6rem 1rem 0.6rem 0.7rem;
+  cursor: pointer;
+  transition: background 0.13s;
+  display: flex;
+  align-items: center;
+  min-width: 38px;
+  min-height: 38px;
+  position: relative;
+  justify-content: center;
+  color: #b58116;
+}
+
+/* Arrow pouze na tlačítku */
+#nav-container .btn-toggle::after {
+  content: '';
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  border-right: 2px solid #b58116;
+  border-bottom: 2px solid #b58116;
+  margin-left: 0.2em;
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+  opacity: 0.85;
+}
+#nav-container .btn-toggle[aria-expanded="true"]::after {
+  transform: rotate(135deg);
+}
+
+/* Zvýraznění šipky po hoveru */
+#nav-container .btn-toggle:hover {
+  background: rgba(224, 194, 121, 0.11);
+}
+
+/* Collapsed submenu (jemně glassy + okraj) */
+#nav-container .collapse {
+  margin-left: 0.8rem;
+  border-left: 2px solid rgba(182,155,100,0.08);
+  padding-left: 0.7rem;
+  background: rgba(255, 249, 233, 0.11);
+  border-radius: 0.9rem;
+  transition: background 0.25s;
+}
+
+/* Seznam služeb v podmenu */
+#nav-container .btn-toggle-nav a {
+  font-size: 0.98rem;
+  color: #564631;
+  padding: 0.33rem 0.9rem;
+  border-radius: 0.6rem;
+  margin: 0.13rem 0;
+  background: none;
+  display: block;
+  transition: background 0.13s, color 0.13s;
+}
+
+#nav-container .btn-toggle-nav a:hover,
+#nav-container .btn-toggle-nav a.active {
+  background: rgba(224, 194, 121, 0.14);
+  color: #b58116;
+}
+
+/* Scrollbar glassy a decentní */
+#nav-container {
+  scrollbar-width: thin;
+  scrollbar-color: #e1cfa3 #f7f1e8;
+}
+#nav-container::-webkit-scrollbar {
+  width: 8px;
+  background: #f7f1e8;
+}
+#nav-container::-webkit-scrollbar-thumb {
+  background: #e1cfa3;
+  border-radius: 4px;
+}
+
+/* Responsivita */
+@media (max-width: 700px) {
+  #nav-container {
+    min-width: 100vw;
+    min-height: unset;
+    border-radius: 0 0 1.2rem 1.2rem;
+    margin: 0;
+    box-shadow: 0 4px 24px 0 rgba(31,38,135,0.12);
+  }
+}

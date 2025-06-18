@@ -103,17 +103,24 @@ function renderServiceForm() {
   const editorContainer = document.getElementById("new-service-editor");
   if (!editorContainer) return;
 
-  editorContainer.innerHTML = `
+  editorContainer.innerHTML = //html
+  `
     <h3>Nová služba</h3>
-    <input id="service-name" placeholder="Název služby"><br>
+    <form>
+    <input id="service-name" placeholder="Název služby" required><br>
     <textarea id="service-description" placeholder="Popis služby"></textarea><br>
     <label>Aktivní: <input type="checkbox" id="service-active" checked></label><br>
-    <button id="save-service-button">Uložit</button>
+    <button type="submit" id="save-service-button">Uložit</button>
     <button id="cancel-service-button">Zrušit</button>
+    </form>
   `;
 
   document.getElementById("save-service-button")?.addEventListener("click", () => {
     const name = (document.getElementById("service-name") as HTMLInputElement).value;
+    if (!name) {
+      alert("název sluzby nesmi byt prazdny!");
+      return;
+    }
     const description = (document.getElementById("service-description") as HTMLTextAreaElement).value;
     const isActive = (document.getElementById("service-active") as HTMLInputElement).checked;
 

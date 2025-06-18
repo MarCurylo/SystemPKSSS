@@ -1,6 +1,6 @@
 import { loadServices } from "../services/servicesApi.js";
 
-export async function renderMainNavigation(): Promise<void> {
+export async function renderMainNavigation() {
   const navContainer = document.getElementById("nav-container");
   if (!navContainer) return;
 
@@ -8,30 +8,31 @@ export async function renderMainNavigation(): Promise<void> {
 
   let html = `
     <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
-      <span class="fs-5 fw-semibold">PKSSS</span>
+      <span class="fs-5">PKSSS</span>
     </a>
     <ul class="list-unstyled ps-0">
-      <li class="mb-1">
-      <a href="#services" class="link-dark rounded">
-             <button class="btn btn-toggle btn-danger align-items-center rounded">
-           Sluzby</a>
-        </button>
-
-        <button class="btn btn-toggle btn-primary align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#services-collapse" aria-expanded="true">
-          <>
-        </button>
-        <div class="collapse show" id="services-collapse">
-          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+      <li class="mb-1 d-flex align-items-center">
+        <a href="#services" class="nav-link flex-grow-1">Služby</a>
+        <button 
+          class="btn-toggle align-items-center ms-1"
+          data-bs-toggle="collapse"
+          data-bs-target="#services-collapse"
+          aria-expanded="true"
+          aria-label="Rozbalit/Sbalit služby"
+          type="button"
+        ></button>
+      </li>
+      <div class="collapse show" id="services-collapse">
+        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
   `;
 
   for (const service of services) {
-    html += `<li><a href="#services#${service.id}" class="link-dark btn btn-secondary btn-border rounded">${service.name}</a></li>`;
+    html += `<li><a href="#services#${service.id}" class="nav-link">${service.name}</a></li>`;
   }
 
   html += `
-          </ul>
-        </div>
-      </li>
+        </ul>
+      </div>
     </ul>
   `;
 

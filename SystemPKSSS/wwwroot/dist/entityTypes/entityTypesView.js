@@ -1,4 +1,4 @@
-import { loadEntityTypes, createEntityType, deleteEntityType, loadEntityTypesByService, updateEntityType } from './entityTypesApi.js';
+import { createEntityType, deleteEntityType, loadEntityTypesByService, updateEntityType, loadEntityTypeDetail } from './entityTypesApi.js';
 // Vstupní funkce pro zobrazeni rozhrani pro entity
 export function renderEntityTypeTab(serviceId, container) {
     var _a;
@@ -84,15 +84,22 @@ function renderEntityTypeForm(serviceId) {
     const editorContainer = document.getElementById("new-entityType-editor");
     if (!editorContainer)
         return;
-    editorContainer.innerHTML = `
+    editorContainer.innerHTML = //html
+        `
     <h3>Nový Typ Entity</h3>
-    <input id="entityType-name" placeholder="Název typu entity"><br>
+    <form>
+    <input id="entityType-name" placeholder="Název typu entity" required><br>
     <textarea id="entityType-description" placeholder="Popis"></textarea><br>
     <button id="save-entityType-button">Uložit</button>
     <button id="cancel-entityType-button">Zrušit</button>
+    </form>
   `;
     (_a = document.getElementById("save-entityType-button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
         const name = document.getElementById("entityType-name").value;
+        if (!name) {
+            alert("název typy entity nesmi byt prazdny!");
+            return;
+        }
         const description = document.getElementById("entityType-description").value;
         const newEntityType = {
             name,
@@ -172,10 +179,9 @@ function renderEntityTypeDeleteForm(serviceId, id) {
     });
 }
 // Detail služby (pro router)
-export function renderEntityTypeDetail(id, container) {
-    loadEntityTypes().then(entityTypes => {
+export function renderEntityTypeDetail(serviceId, id, container) {
+    loadEntityTypeDetail(serviceId, id).then(entityType => {
         var _a;
-        const entityType = entityTypes.find(e => e.id === id);
         if (!entityType) {
             container.innerHTML = "<p>Typ Entity nenalezen.</p>";
             return;
@@ -186,6 +192,7 @@ export function renderEntityTypeDetail(id, container) {
       <h5>Datum založení:</h5>${entityType.createdAt
             ? new Date(entityType.createdAt).toLocaleString('cs-CZ')
             : 'Neznámé'}
-      <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#attributeDefinition" class="btn btn-secondary">Atributy sluzby</a>`;
+      <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#attributeDefinition" class="btn btn-secondary">Atributy typu entity</a>
+    `;
     });
 }

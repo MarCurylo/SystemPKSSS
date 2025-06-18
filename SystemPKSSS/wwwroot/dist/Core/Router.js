@@ -27,7 +27,7 @@ export function handleHashChange() {
             }
             else {
                 //detail typu entit
-                renderEntityTypeDetail(subId, container);
+                renderEntityTypeDetail(id, subId, container);
             }
         }
         else {

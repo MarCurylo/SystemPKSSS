@@ -21,15 +21,7 @@ public static class EntityTypesEndpoints
 
             db.EntityTypes.Add(entityType);
             await db.SaveChangesAsync();
-            return Results.Created($"/entityTypes/{entityType.Id}", entityType);
-        });
-
-
-        // Výpis všech typu entit
-        app.MapGet("/entityTypes", async (ApplicationDbContext db) =>
-        {
-            var entityTypes = await db.EntityTypes.ToListAsync();
-            return Results.Ok(entityTypes);
+            return Results.Created($"/services/{serviceId}/entityTypes/{entityType.Id}", entityType);
         });
 
         // Výpis typu entit podle služby
@@ -43,9 +35,9 @@ public static class EntityTypesEndpoints
         });
 
         // Detail typu entity
-        app.MapGet("/entityTypes/{id}", async (int id, ApplicationDbContext db) =>
+        app.MapGet("/services/{serviceId}/entityTypes/{entityTypeId}", async (int serviceId, int entityTypeId, ApplicationDbContext db) =>
         {
-            var entityType = await db.EntityTypes.FindAsync(id);
+            var entityType = await db.EntityTypes.FindAsync(entityTypeId);
             return entityType is not null ? Results.Ok(entityType) : Results.NotFound();
         });
 
@@ -80,7 +72,7 @@ public static class EntityTypesEndpoints
         });
 
         // Mazání entity typu
-        app.MapDelete("/entityTypes/{entityTypeId}", async (int entityTypeId, ApplicationDbContext db) =>
+        app.MapDelete("/services/{serviceId}/entityTypes/{entityTypeId}", async (int serviceId, int entityTypeId, ApplicationDbContext db) =>
         {
             var entityType = await db.EntityTypes.FindAsync(entityTypeId);
             if (entityType is null) return Results.NotFound();

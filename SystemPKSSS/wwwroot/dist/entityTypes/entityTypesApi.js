@@ -17,6 +17,16 @@ export function loadEntityTypes() {
         return yield response.json();
     });
 }
+//nacti detail daneho typu entity
+export function loadEntityTypeDetail(serviceId, entityTypeId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(`/services/${serviceId}/entityTypes/${entityTypeId}`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch entity type");
+        }
+        return yield response.json();
+    });
+}
 // Načti všechny druhy entit ve sluzbe
 export function loadEntityTypesByService(serviceId) {
     return __awaiter(this, void 0, void 0, function* () {

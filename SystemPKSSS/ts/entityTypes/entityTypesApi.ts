@@ -7,6 +7,14 @@ export async function loadEntityTypes(): Promise<EntityType[]> {
     }
     return await response.json();
 }
+//nacti detail daneho typu entity
+export async function loadEntityTypeDetail(serviceId: number, entityTypeId: number): Promise<EntityType> {
+    const response = await fetch(`/services/${serviceId}/entityTypes/${entityTypeId}`);
+    if (!response.ok) {
+        throw new Error("Failed to fetch entity type");
+    }
+    return await response.json();
+}
 
 // Načti všechny druhy entit ve sluzbe
 export async function loadEntityTypesByService(serviceId: number): Promise<EntityType[]> {

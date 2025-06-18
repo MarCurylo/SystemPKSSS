@@ -1,4 +1,4 @@
-export interface AttributeDefinitions {
+export interface AttributeDefinition {
   id: number;
   entityTypeId: number;
   name?: string;
