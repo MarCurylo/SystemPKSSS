@@ -1,4 +1,4 @@
-import { AttributeDefinition } from "./attributeDefinitionsModel";
+import { AttributeDefinition, NewAttributeDefinition } from "./attributeDefinitionsModel";
 import { AttributeEnumValue } from "../AttributeDefinitionEnumValues/attributeEnumValuesModel";
 
 // Načti všechny definice atributu v danem entity typu
@@ -11,11 +11,11 @@ export async function loadAttributeDefinitionsByEntityType(serviceId: number, en
 }
 
 // Vytvoř novy attribute definition v typu entity
-export async function createAttributeDefinition(serviceId: number, entityTypeId: number, attributeDefinition: AttributeDefinition): Promise<AttributeDefinition> {
+export async function createAttributeDefinition(serviceId: number, entityTypeId: number, newAttributeDefinition: NewAttributeDefinition): Promise<AttributeDefinition> {
     const response = await fetch(`/services/${serviceId}/entityTypes/${entityTypeId}`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(attributeDefinition)
+        body: JSON.stringify(newAttributeDefinition)
     });
 
     if (!response.ok) {

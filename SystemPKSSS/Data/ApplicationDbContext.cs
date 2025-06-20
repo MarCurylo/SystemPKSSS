@@ -9,6 +9,14 @@ public class ApplicationDbContext : DbContext
         : base(options)
     {
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<AttributeDefinition>()
+            .Property(a => a.AttributeType)
+            .HasConversion<string>();
+    }
+
     public DbSet<Service> Services { get; set; }
     public DbSet<Entity> Entities { get; set; }
     public DbSet<EntityType> EntityTypes { get; set; }

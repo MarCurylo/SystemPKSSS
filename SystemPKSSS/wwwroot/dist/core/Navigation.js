@@ -23,14 +23,13 @@ export function renderMainNavigation() {
         <a href="#services" class="nav-link flex-grow-1">Služby</a>
         <button 
           class="btn-toggle align-items-center ms-1"
-          data-bs-toggle="collapse"
-          data-bs-target="#services-collapse"
           aria-expanded="true"
           aria-label="Rozbalit/Sbalit služby"
           type="button"
+          id="services-toggle"
         ></button>
       </li>
-      <div class="collapse show" id="services-collapse">
+      <div class="fluid-collapse" id="services-collapse">
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
   `;
         for (const service of services) {
@@ -42,5 +41,24 @@ export function renderMainNavigation() {
     </ul>
   `;
         navContainer.innerHTML = html;
+        // Přidání JS pro collapse (univerzálně!)
+        const toggle = document.getElementById("services-toggle");
+        const collapse = document.getElementById("services-collapse");
+        if (toggle && collapse) {
+            toggle.addEventListener("click", () => {
+                const expanded = toggle.getAttribute("aria-expanded") === "true";
+                if (expanded) {
+                    collapse.classList.add("fluid-collapsed");
+                    toggle.setAttribute("aria-expanded", "false");
+                }
+                else {
+                    collapse.classList.remove("fluid-collapsed");
+                    toggle.setAttribute("aria-expanded", "true");
+                }
+            });
+            // Defaultně otevřené
+            collapse.classList.remove("fluid-collapsed");
+            toggle.setAttribute("aria-expanded", "true");
+        }
     });
 }

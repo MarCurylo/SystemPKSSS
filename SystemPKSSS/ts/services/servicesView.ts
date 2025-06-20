@@ -39,7 +39,7 @@ function refreshServicesList() {
           Vytvořeno: ${service.createdAt
             ? new Date(service.createdAt as string).toLocaleString('cs-CZ')
             : 'Neznámé'}<br>
-
+            <b>${!service.isActive ? `neni aktivni` : `je aktivni`} </b>
           <button data-id="${service.id}" class="edit-btn">Edit</button>
           <button data-id="${service.id}" class="delete-btn">Smazat</button>
           <button data-id="${service.id}" class="detail-btn">Detail služby</button>
@@ -223,7 +223,8 @@ export function renderServiceDetail(id: number, container: HTMLElement) {
       <h5>Popis:</h5>${service.description ?? "Nezadán"}
       <h5>Datum založení:</h5>${service.createdAt 
         ? new Date(service.createdAt as string).toLocaleString('cs-CZ')
-        : 'Neznámé'}
+        : 'Neznámé'}<br>
+                    <b>${!service.isActive ? `neni aktivni` : `je aktivni`} </b>
         <h2>Typy entit pro službu: ${service.name}</h2><div id="entity-types-list"></div>
       <a href="#services#${service.id}#entitytypes" class="btn btn-secondary">Typy entit</a>`
   });

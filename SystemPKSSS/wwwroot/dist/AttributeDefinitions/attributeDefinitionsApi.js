@@ -18,12 +18,12 @@ export function loadAttributeDefinitionsByEntityType(serviceId, entityTypeId) {
     });
 }
 // Vytvoř novy attribute definition v typu entity
-export function createAttributeDefinition(serviceId, entityTypeId, attributeDefinition) {
+export function createAttributeDefinition(serviceId, entityTypeId, newAttributeDefinition) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch(`/services/${serviceId}/entityTypes/${entityTypeId}`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(attributeDefinition)
+            body: JSON.stringify(newAttributeDefinition)
         });
         if (!response.ok) {
             throw new Error("Failed to create attribute definition");

@@ -4,6 +4,3 @@ export interface AttributeEnumValue {
   value: string;
   displayOrder?: number;
 }
-
-// export type NewEntityType = Omit<EntityType, 'id' | 'createdAt'>;
-// export type UpdateEntityType = Omit<EntityType, 'createdAt'>;

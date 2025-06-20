@@ -50,6 +50,7 @@ export function refreshEntityTypesList(serviceId: number) {
     });
 
     // Eventy:
+    //edit
     document.querySelectorAll(".edit-btn").forEach(btn => {
       btn.addEventListener("click", (e: any) => {
         const id = parseInt(e.target.dataset.id);
@@ -63,13 +64,15 @@ export function refreshEntityTypesList(serviceId: number) {
         }
       });
     });
+    
+    //detail
          document.querySelectorAll(".detail-btn").forEach(btn => {
       btn.addEventListener("click", (e: any) => {
         const id = parseInt(e.target.dataset.id);
         window.location.hash = `#services#${serviceId}#entitytypes#${id}`;
       });
     });
-
+    //delete
     document.querySelectorAll(".delete-btn").forEach(btn => {
       btn.addEventListener("click", (e: any) => {
         const id = parseInt(e.target.dataset.id);

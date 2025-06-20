@@ -3,17 +3,25 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using SystemPKSSS.Models;
 
 namespace SystemPKSSS.Models;
 public enum AttributeDataType
 {
+    [Description("Text")]
     String,
+    [Description("Číslo")]
     Number,
+    [Description("Datum")]
     Date,
+    [Description("Ano/Ne")]
     Boolean,
+    [Description("Výběr z možností")]
     Enum,
+    [Description("Soubor")]
     File,
+    [Description("Obrázek")]
     Image
 }
 
@@ -30,7 +38,8 @@ public class AttributeDefinition
 
     public string Name { get; set; }
     public string DisplayName { get; set; }
-    public AttributeDataType  AttributeType { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public AttributeDataType AttributeType { get; set; }
     public bool IsRequired { get; set; }
     public int OrderIndex { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;

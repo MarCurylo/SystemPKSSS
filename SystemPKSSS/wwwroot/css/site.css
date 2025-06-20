@@ -1,12 +1,14 @@
-body{background: rgba(247, 241, 232, 0.9);}
-/* === Glassy sidebar panel === */
+/* body {
+  background: rgba(212, 86, 23, 0.4);
+} */
 
+/* === Glassy sidebar panel === */
 #nav-container {
-  background: rgba(247, 241, 232, 3); /* jemně krémová, glassy */
+  background: rgba(247, 241, 232, 0.7); /* jemně krémová, glassy */
   backdrop-filter: blur(16px) saturate(170%);
   -webkit-backdrop-filter: blur(16px) saturate(170%);
   border-radius: 1.2rem;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.5);
   border: 1px solid rgba(255,255,255,0.23);
   padding: 2rem 1rem 1.5rem 1rem;
   margin: 1.2rem 0.6rem;
@@ -106,7 +108,8 @@ body{background: rgba(247, 241, 232, 0.9);}
 }
 
 /* Collapsed submenu (jemně glassy + okraj) */
-#nav-container .collapse {
+#nav-container .collapse,
+.fluid-collapse {
   margin-left: 0.8rem;
   border-left: 2px solid rgba(182,155,100,0.08);
   padding-left: 0.7rem;
@@ -157,3 +160,27 @@ body{background: rgba(247, 241, 232, 0.9);}
     box-shadow: 0 4px 24px 0 rgba(31,38,135,0.12);
   }
 }
+
+/* === FLUID COLLAPSE UNIVERSAL ANIMATION === */
+/* Používej .fluid-collapse & .fluid-collapsed v JS (viz níže) */
+.fluid-collapse {
+  overflow: hidden;
+  transition:
+    max-height 0.38s cubic-bezier(.4,0,.2,1),
+    opacity 0.22s,
+    padding 0.2s cubic-bezier(.4,0,.2,1);
+  max-height: 999px; /* při otevření */
+  opacity: 1;
+  padding-top: 0.4em;
+  padding-bottom: 0.4em;
+}
+
+.fluid-collapsed {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  pointer-events: none;
+}
+
+/* Přechod je plně fluidní, můžete použít .fluid-collapse kdekoliv v projektu! */
