@@ -31,3 +31,9 @@ export interface AttributeDefinition {
 }
 
 export type NewAttributeDefinition = Omit<AttributeDefinition, 'id' | 'createdAt'>;
+
+export interface EntityAttributeValue {
+  id: number;
+  attributeDefinitionId: number;
+  value: string;
+}
