@@ -1,71 +1,231 @@
 using Microsoft.EntityFrameworkCore;
 using SystemPKSSS.Models;
 using SystemPKSSSS.Data;
-using System.ComponentModel;
+using SystemPKSSS.DTOs;
 
 namespace SystemPKSSSS.Endpoints;
-
 
 public static class EntitiesEndpoints
 {
     public static void MapEntityEndpoints(this IEndpointRouteBuilder app)
     {
         // Vytvoření nové entity
-        app.MapPost("/services/{serviceId}/entityTypes/{entityTypeId}/entities", async (int entityTypeId, Entity entity, ApplicationDbContext db) =>
-    {
-        // Validace existence typu entit
-        var entityTypeExists = await db.EntityTypes.AnyAsync(s => s.Id == entityTypeId);
-        if (!entityTypeExists)
+        app.MapPost("/services/{serviceId}/entityTypes/{entityTypeId}/entities", async (int serviceId, int entityTypeId, CreateEntityDto dto, ApplicationDbContext db) =>
         {
-            return Results.BadRequest($"entity type with ID {entityTypeId} does not exist.");
-        }
-        entiti.EntityTypeId = entityTypeId;
+            try
+            {
+                var entityTypeExists = await db.EntityTypes.AnyAsync(s => s.Id == entityTypeId && s.ServiceId == serviceId);
+                if (!entityTypeExists)
+                    return Results.BadRequest(new { error = $"Entity type with ID {entityTypeId} does not exist for service {serviceId}." });
 
-            var entity = new Entity
-    {
-        ServiceId = serviceId,
-        EntityTypeId = entityTypeId,
-        CreatedAt = DateTime.UtcNow,
-        AttributeValues = dto.AttributeValues.Select(v => new EntityAttributeValue
-        {
-            AttributeDefinitionId = v.AttributeDefinitionId,
-            Value = v.Value
-        }).ToList()
-    };
+                var entity = new Entity
+                {
+                    ServiceId = serviceId,
+                    EntityTypeId = entityTypeId,
+                    CreatedAt = DateTimeOffset.UtcNow,
+                    AttributeValues = dto.AttributeValues.Select(v => new EntityAttributeValue
+                    {
+                        AttributeDefinitionId = v.AttributeDefinitionId,
+                        ValueString = v.ValueString,
+                        ValueNumber = v.ValueNumber,
+                        ValueDate = v.ValueDate,
+                        ValueBoolean = v.ValueBoolean,
+                        ValueFileId = v.ValueFileId,
+                        CreatedAt = DateTimeOffset.UtcNow
+                    }).ToList()
+                };
 
-    db.Entities.Add(entity);
-    await db.SaveChangesAsync();
+                db.Entities.Add(entity);
+                await db.SaveChangesAsync();
 
-    return Results.Created($"/services/{serviceId}/entitytypes/{entityTypeId}/entities/{entity.Id}", entity);
-});
+                var result = new EntityDto
+                {
+                    Id = entity.Id,
+                    ServiceId = entity.ServiceId,
+                    EntityTypeId = entity.EntityTypeId,
+                    CreatedAt = entity.CreatedAt,
+                    UpdatedAt = entity.UpdatedAt,
+                    DeletedAt = entity.DeletedAt,
+                    AttributeValues = entity.AttributeValues.Select(av => new EntityAttributeValueDto
+                    {
+                        Id = av.Id,
+                        AttributeDefinitionId = av.AttributeDefinitionId,
+                        ValueString = av.ValueString,
+                        ValueNumber = av.ValueNumber,
+                        ValueDate = av.ValueDate,
+                        ValueBoolean = av.ValueBoolean,
+                        ValueFileId = av.ValueFileId,
+                        CreatedAt = av.CreatedAt
+                    }).ToList()
+                };
 
+                return Results.Created($"/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entity.Id}", result);
+            }
+            catch (Exception ex)
+            {
+                // Vypiš detail chyby do response
+                return Results.Problem(ex.Message);
+            }
+        });
 
         // Výpis entit podle entity type GET
         app.MapGet("/services/{serviceId}/entityTypes/{entityTypeId}/entities", async (int serviceId, int entityTypeId, ApplicationDbContext db) =>
         {
-            var entities = await db.Entities
-            .Where(et => et.EntityTypeId == entityTypeId)
-            .AsNoTracking()
-            // .Include(e => e.AttributeValues)
-            .ToListAsync();
-            return Results.Ok(entities);
+            try
+            {
+                var entities = await db.Entities
+                    .Where(e => e.EntityTypeId == entityTypeId && e.ServiceId == serviceId)
+                    .Include(e => e.AttributeValues)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                var result = entities.Select(entity => new EntityDto
+                {
+                    Id = entity.Id,
+                    ServiceId = entity.ServiceId,
+                    EntityTypeId = entity.EntityTypeId,
+                    CreatedAt = entity.CreatedAt,
+                    UpdatedAt = entity.UpdatedAt,
+                    DeletedAt = entity.DeletedAt,
+                    AttributeValues = entity.AttributeValues.Select(av => new EntityAttributeValueDto
+                    {
+                        Id = av.Id,
+                        AttributeDefinitionId = av.AttributeDefinitionId,
+                        ValueString = av.ValueString,
+                        ValueNumber = av.ValueNumber,
+                        ValueDate = av.ValueDate,
+                        ValueBoolean = av.ValueBoolean,
+                        ValueFileId = av.ValueFileId,
+                        CreatedAt = av.CreatedAt
+                    }).ToList()
+                }).ToList();
+
+                return Results.Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
         });
 
         // Detail entity GET
         app.MapGet("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}", async (int serviceId, int entityTypeId, int entityId, ApplicationDbContext db) =>
         {
-            var entity = await db.Entities.FindAsync(entityId);
-            return entity is not null ? Results.Ok(entity) : Results.NotFound();
+            try
+            {
+                var entity = await db.Entities
+                    .Where(e => e.Id == entityId && e.EntityTypeId == entityTypeId && e.ServiceId == serviceId)
+                    .Include(e => e.AttributeValues)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync();
+
+                if (entity is null)
+                    return Results.NotFound(new { error = "Entity not found." });
+
+                var result = new EntityDto
+                {
+                    Id = entity.Id,
+                    ServiceId = entity.ServiceId,
+                    EntityTypeId = entity.EntityTypeId,
+                    CreatedAt = entity.CreatedAt,
+                    UpdatedAt = entity.UpdatedAt,
+                    DeletedAt = entity.DeletedAt,
+                    AttributeValues = entity.AttributeValues.Select(av => new EntityAttributeValueDto
+                    {
+                        Id = av.Id,
+                        AttributeDefinitionId = av.AttributeDefinitionId,
+                        ValueString = av.ValueString,
+                        ValueNumber = av.ValueNumber,
+                        ValueDate = av.ValueDate,
+                        ValueBoolean = av.ValueBoolean,
+                        ValueFileId = av.ValueFileId,
+                        CreatedAt = av.CreatedAt
+                    }).ToList()
+                };
+
+                return Results.Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
         });
 
-        // Mazání definice attributu DELETE
+        // Update entity
+        app.MapPut("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}", async (int serviceId, int entityTypeId, int entityId, CreateEntityDto dto, ApplicationDbContext db) =>
+        {
+            try
+            {
+                var entity = await db.Entities
+                    .Include(e => e.AttributeValues)
+                    .FirstOrDefaultAsync(e => e.Id == entityId && e.EntityTypeId == entityTypeId && e.ServiceId == serviceId);
+
+                if (entity is null)
+                    return Results.NotFound(new { error = "Entity not found." });
+
+                db.EntityAttributeValues.RemoveRange(entity.AttributeValues);
+
+                entity.AttributeValues = dto.AttributeValues.Select(v => new EntityAttributeValue
+                {
+                    AttributeDefinitionId = v.AttributeDefinitionId,
+                    ValueString = v.ValueString,
+                    ValueNumber = v.ValueNumber,
+                    ValueDate = v.ValueDate,
+                    ValueBoolean = v.ValueBoolean,
+                    ValueFileId = v.ValueFileId,
+                    CreatedAt = DateTimeOffset.UtcNow
+                }).ToList();
+
+                entity.UpdatedAt = DateTimeOffset.UtcNow;
+
+                await db.SaveChangesAsync();
+
+                var result = new EntityDto
+                {
+                    Id = entity.Id,
+                    ServiceId = entity.ServiceId,
+                    EntityTypeId = entity.EntityTypeId,
+                    CreatedAt = entity.CreatedAt,
+                    UpdatedAt = entity.UpdatedAt,
+                    DeletedAt = entity.DeletedAt,
+                    AttributeValues = entity.AttributeValues.Select(av => new EntityAttributeValueDto
+                    {
+                        Id = av.Id,
+                        AttributeDefinitionId = av.AttributeDefinitionId,
+                        ValueString = av.ValueString,
+                        ValueNumber = av.ValueNumber,
+                        ValueDate = av.ValueDate,
+                        ValueBoolean = av.ValueBoolean,
+                        ValueFileId = av.ValueFileId,
+                        CreatedAt = av.CreatedAt
+                    }).ToList()
+                };
+
+                return Results.Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        });
+
+        // Mazání entity DELETE
         app.MapDelete("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}", async (int serviceId, int entityTypeId, int entityId, ApplicationDbContext db) =>
         {
-            var entity = await db.Entities.FindAsync(entityId);
-            if (entity is null) return Results.NotFound();
-            db.Entities.Remove(entity);
-            await db.SaveChangesAsync();
-            return Results.NoContent();
+            try
+            {
+                var entity = await db.Entities
+                    .Where(e => e.Id == entityId && e.EntityTypeId == entityTypeId && e.ServiceId == serviceId)
+                    .FirstOrDefaultAsync();
+                if (entity is null) return Results.NotFound(new { error = "Entity not found." });
+                db.Entities.Remove(entity);
+                await db.SaveChangesAsync();
+                return Results.NoContent();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
         });
     }
 }

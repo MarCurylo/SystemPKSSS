@@ -1,4 +1,11 @@
-﻿public class EntityAttributeValue
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using SystemPKSSS.Models;
+public class EntityAttributeValue
 {
     [Key]
     public int Id { get; set; }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SystemPKSSS.Models;
 using SystemPKSSSS.Data;
+using SystemPKSSS.DTOs;
 
 namespace SystemPKSSSS.Endpoints;
 
@@ -9,42 +10,89 @@ public static class ServicesEndpoints
     public static void MapServicesEndpoints(this IEndpointRouteBuilder app)
     {
         // Vytvoření služby
-        app.MapPost("/services", async (Service service, ApplicationDbContext db) =>
+        app.MapPost("/services", async (CreateServiceDto dto, ApplicationDbContext db) =>
         {
+            var service = new Service
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                IsActive = true,
+                CreatedAt = DateTimeOffset.UtcNow
+            };
             db.Services.Add(service);
             await db.SaveChangesAsync();
-            return Results.Created($"/services/{service.Id}", service);
+
+            // Vracíme ServiceDto, ne entitu
+            var result = new ServiceDto
+            {
+                Id = service.Id,
+                Name = service.Name,
+                Description = service.Description,
+                IsActive = service.IsActive,
+                CreatedAt = service.CreatedAt
+            };
+            return Results.Created($"/services/{service.Id}", result);
         });
 
         // Výpis všech služeb
         app.MapGet("/services", async (ApplicationDbContext db) =>
         {
-            var services = await db.Services.ToListAsync();
+            var services = await db.Services
+                .Select(service => new ServiceDto
+                {
+                    Id = service.Id,
+                    Name = service.Name,
+                    Description = service.Description,
+                    IsActive = service.IsActive,
+                    CreatedAt = service.CreatedAt
+                })
+                .ToListAsync();
             return Results.Ok(services);
         });
 
         // Detail služby
         app.MapGet("/services/{id}", async (int id, ApplicationDbContext db) =>
         {
-            var service = await db.Services.FindAsync(id);
+            var service = await db.Services
+                .Where(s => s.Id == id)
+                .Select(s => new ServiceDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Description = s.Description,
+                    IsActive = s.IsActive,
+                    CreatedAt = s.CreatedAt
+                })
+                .FirstOrDefaultAsync();
+
             return service is not null ? Results.Ok(service) : Results.NotFound();
         });
 
         // Editace služby
-        app.MapPut("/services/{id}", async (int id, Service updatedService, ApplicationDbContext db) =>
+        app.MapPut("/services/{id}", async (int id, UpdateServiceDto dto, ApplicationDbContext db) =>
         {
             var service = await db.Services.FindAsync(id);
             if (service is null) return Results.NotFound();
 
-            service.Name = updatedService.Name;
-            service.Description = updatedService.Description;
-            service.IsActive = updatedService.IsActive;
+            service.Name = dto.Name;
+            service.Description = dto.Description;
+            if (dto.IsActive.HasValue)
+                service.IsActive = dto.IsActive.Value;
 
             await db.SaveChangesAsync();
-            return Results.Ok(service);
+
+            var result = new ServiceDto
+            {
+                Id = service.Id,
+                Name = service.Name,
+                Description = service.Description,
+                IsActive = service.IsActive,
+                CreatedAt = service.CreatedAt
+            };
+            return Results.Ok(result);
         });
 
-        // Aktivace / deaktivace
+        // Aktivace / deaktivace služby
         app.MapPut("/services/{id}/activate", async (int id, bool activate, ApplicationDbContext db) =>
         {
             var service = await db.Services.FindAsync(id);
@@ -52,7 +100,16 @@ public static class ServicesEndpoints
 
             service.IsActive = activate;
             await db.SaveChangesAsync();
-            return Results.Ok(service);
+
+            var result = new ServiceDto
+            {
+                Id = service.Id,
+                Name = service.Name,
+                Description = service.Description,
+                IsActive = service.IsActive,
+                CreatedAt = service.CreatedAt
+            };
+            return Results.Ok(result);
         });
 
         // Mazání služby

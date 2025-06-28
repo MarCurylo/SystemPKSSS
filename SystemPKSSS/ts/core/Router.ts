@@ -1,6 +1,7 @@
 import { renderServicesTab, renderServiceDetail } from "../services/servicesView.js";
 import { renderEntityTypeTab, renderEntityTypeDetail } from "../entityTypes/entityTypesView.js";
 import { renderAttributeDefinitionTab } from "../AttributeDefinitions/attributeDefinitionsView.js";
+import { renderEntityTap } from "../Entities/entitiesView.js";
 
 // Hlavní router funkce
 export function handleHashChange() {
@@ -37,10 +38,10 @@ if (section === "services") {
                 // Detail konkrétní definice atributu
                 // renderAttributeDefinitionDetail(id, subId, subSubId, container);
             }
-        } else if (subSubSection === "enumvalues" && subSubId) {
-            // Seznam/Detail ENUM hodnot pro danou definici atributu
-            // renderAttributeEnumValuesTab(id, subId, subSubId, container);
-        } else {
+        } else if (subSubSection === "entities") if (!subSubId) {
+                // Seznam definic atributů pro daný entityType
+                renderEntityTap(id, subId, container);
+            } else {
             container.innerHTML = "<p>Neznámá podstránka typu entity.</p>";
         }
     } else {

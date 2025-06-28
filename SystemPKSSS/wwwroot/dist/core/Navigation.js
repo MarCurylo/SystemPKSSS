@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { loadServices } from "../services/servicesApi.js";
-import { loadEntityTypesByService } from "../entityTypes/entityTypesApi.js";
+import { loadEntityTypes } from "../entityTypes/entityTypesApi.js";
 import { attachFluidCollapses } from "../ui/collapse.js";
 export function renderMainNavigation(options) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -63,7 +63,7 @@ export function renderMainNavigation(options) {
       <div class="fluid-collapse fluid-collapsed" id="service-collapse-${service.id}">
         <ul>
   `;
-            const entityTypes = yield loadEntityTypesByService(service.id);
+            const entityTypes = yield loadEntityTypes(service.id);
             for (const entityType of entityTypes) {
                 html += `
           <li>

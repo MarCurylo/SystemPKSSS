@@ -1,5 +1,5 @@
 import { loadServices } from "../services/servicesApi.js";
-import { loadEntityTypesByService } from "../entityTypes/entityTypesApi.js";
+import { loadEntityTypes } from "../entityTypes/entityTypesApi.js";
 import { attachFluidCollapses } from "../ui/collapse.js";
 
 export async function renderMainNavigation(options?: {CollapseState?: boolean}) {
@@ -56,7 +56,7 @@ export async function renderMainNavigation(options?: {CollapseState?: boolean}) 
       <div class="fluid-collapse fluid-collapsed" id="service-collapse-${service.id}">
         <ul>
   `;
-  const entityTypes = await loadEntityTypesByService(service.id);
+  const entityTypes = await loadEntityTypes(service.id);
   for (const entityType of entityTypes) {
     html += `
           <li>

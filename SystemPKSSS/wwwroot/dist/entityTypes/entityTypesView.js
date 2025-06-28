@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { createEntityType, deleteEntityType, loadEntityTypesByService, updateEntityType, loadEntityTypeDetail } from './entityTypesApi.js';
+import { loadEntityTypes, createEntityType, deleteEntityType, updateEntityType, loadEntityType as loadEntityTypeDetail, } from './entityTypesApi.js';
 import { loadAttributeDefinitionsByEntityType } from '../AttributeDefinitions/attributeDefinitionsApi.js';
 import { renderMainNavigation } from '../core/Navigation.js';
 // Vstupní funkce pro zobrazeni rozhrani pro entity
@@ -29,10 +29,9 @@ export function refreshEntityTypesList(serviceId) {
     const listContainer = document.getElementById("entityType-list");
     if (!listContainer)
         return;
-    loadEntityTypesByService(serviceId).then(entityTypes => {
+    loadEntityTypes(serviceId).then(entityTypes => {
         listContainer.innerHTML = "";
         entityTypes.forEach(entityType => {
-            console.log("Loaded entity types:", entityTypes);
             const item = document.createElement("div");
             item.innerHTML = `
         <div>
@@ -53,7 +52,6 @@ export function refreshEntityTypesList(serviceId) {
             listContainer.appendChild(item);
         });
         // Eventy:
-        //edit
         document.querySelectorAll(".edit-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const id = parseInt(e.target.dataset.id);
@@ -68,14 +66,12 @@ export function refreshEntityTypesList(serviceId) {
                 }
             });
         });
-        //detail
         document.querySelectorAll(".detail-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const id = parseInt(e.target.dataset.id);
                 window.location.hash = `#services#${serviceId}#entitytypes#${id}`;
             });
         });
-        //delete
         document.querySelectorAll(".delete-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const id = parseInt(e.target.dataset.id);
@@ -98,14 +94,13 @@ function renderEntityTypeForm(serviceId) {
     const editorContainer = document.getElementById("new-entityType-editor");
     if (!editorContainer)
         return;
-    editorContainer.innerHTML = //html
-        `
+    editorContainer.innerHTML = `
     <h3>Nový Typ Entity</h3>
     <form>
-    <input id="entityType-name" placeholder="Název typu entity" required><br>
-    <textarea id="entityType-description" placeholder="Popis"></textarea><br>
-    <button id="save-entityType-button">Uložit</button>
-    <button id="cancel-entityType-button">Zrušit</button>
+      <input id="entityType-name" placeholder="Název typu entity" required><br>
+      <textarea id="entityType-description" placeholder="Popis"></textarea><br>
+      <button id="save-entityType-button" type="button">Uložit</button>
+      <button id="cancel-entityType-button" type="button">Zrušit</button>
     </form>
   `;
     (_a = document.getElementById("save-entityType-button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
@@ -139,7 +134,7 @@ function renderEntityTypeEditForm(serviceId, id) {
     const editorContainer = document.getElementById(`editor-${id}`);
     if (!editorContainer)
         return;
-    loadEntityTypesByService(serviceId).then(entityTypes => {
+    loadEntityTypes(serviceId).then(entityTypes => {
         var _a, _b, _c;
         const entityType = entityTypes.find(e => e.id === id);
         if (!entityType)
@@ -148,17 +143,23 @@ function renderEntityTypeEditForm(serviceId, id) {
       <h4>Editace:</h4>
       <input id="edit-name-${id}" value="${entityType.name}"><br>
       <textarea id="edit-description-${id}">${(_a = entityType.description) !== null && _a !== void 0 ? _a : ""}</textarea><br>
-      <button id="save-edit-button-${id}">Uložit změny</button>
-      <button id="cancel-edit-button-${id}">Zrušit</button>
+      <button id="save-edit-button-${id}" type="button">Uložit změny</button>
+      <button id="cancel-edit-button-${id}" type="button">Zrušit</button>
     `;
         (_b = document.getElementById(`save-edit-button-${id}`)) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => {
             const name = document.getElementById(`edit-name-${id}`).value;
             const description = document.getElementById(`edit-description-${id}`).value;
-            const updatedEntityType = { id, serviceId, name, description, visible: true,
+            const updatedEntityType = {
+                id,
+                serviceId,
+                name,
+                description,
+                visible: true,
                 editable: true,
                 exportable: true,
-                auditable: true };
-            updateEntityType(serviceId, updatedEntityType).then(() => {
+                auditable: true
+            };
+            updateEntityType(serviceId, id, updatedEntityType).then(() => {
                 refreshEntityTypesList(serviceId);
                 renderMainNavigation({ CollapseState: true });
             });
@@ -173,7 +174,7 @@ function renderEntityTypeDeleteForm(serviceId, id) {
     const deleteContainer = document.getElementById(`delete-${id}`);
     if (!deleteContainer)
         return;
-    loadEntityTypesByService(serviceId).then(entityTypes => {
+    loadEntityTypes(serviceId).then(entityTypes => {
         var _a, _b;
         const entityType = entityTypes.find(e => e.id === id);
         if (!entityType)
@@ -181,11 +182,11 @@ function renderEntityTypeDeleteForm(serviceId, id) {
         deleteContainer.innerHTML = `
       <h4>Potvrzení mazání:</h4>
       Opravdu chcete smazat typ entity: <b>${entityType.name}</b>?<br>
-      <button id="delete-button-${id}">Smazat</button>
-      <button id="cancel-delete-button-${id}">Zrušit</button>
+      <button id="delete-button-${id}" type="button">Smazat</button>
+      <button id="cancel-delete-button-${id}" type="button">Zrušit</button>
     `;
         (_a = document.getElementById(`delete-button-${id}`)) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-            deleteEntityType(entityType).then(() => {
+            deleteEntityType(serviceId, id).then(() => {
                 refreshEntityTypesList(serviceId);
                 renderMainNavigation({ CollapseState: true });
             });
@@ -204,12 +205,10 @@ export function renderEntityTypeDetail(serviceId, id, container) {
             loadEntityTypeDetail(serviceId, id),
             loadAttributeDefinitionsByEntityType(serviceId, id)
         ]);
-        // Pokud nenalezeno
         if (!entityType) {
             container.innerHTML = "<p>Typ Entity nenalezen.</p>";
             return;
         }
-        // Renderuj základní informace
         container.innerHTML = `
     <h2>Jméno typu Entity: ${entityType.name}</h2>
     <h5>Popis:</h5>${(_a = entityType.description) !== null && _a !== void 0 ? _a : "Nezadán"}
@@ -218,14 +217,14 @@ export function renderEntityTypeDetail(serviceId, id, container) {
             : 'Neznámé'}
     <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#attributedefinitions" class="btn btn-secondary">Atributy typu entity</a>
     <div id="attributes-container"></div>
+        <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#entities" class="btn btn-secondary">Entity</a>
+    <div id="attributes-container"></div>
   `;
-        // Najdi si místo v kontejneru pro atributy
         const attributesContainer = container.querySelector("#attributes-container");
         if (attributeDefinitions.length === 0) {
             attributesContainer.innerHTML = "<p>Žádné atributy.</p>";
             return;
         }
-        // Vlož atributy
         attributeDefinitions.forEach(attributeDefinition => {
             const item = document.createElement("div");
             item.innerHTML = `

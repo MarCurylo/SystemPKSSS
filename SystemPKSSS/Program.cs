@@ -22,6 +22,7 @@ app.MapFallbackToFile("index.html");
 app.MapServicesEndpoints();
 app.MapEntityTypesEndpoints();
 app.MapAttributeDefinitionsEndpoints();
+app.MapEntityEndpoints();
 
 //Start
   app.Run();

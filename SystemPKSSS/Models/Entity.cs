@@ -1,10 +1,17 @@
-﻿public class Entity
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using SystemPKSSS.Models;
+public class Entity
 {
     [Key]
     public int Id { get; set; }
 
     public int EntityTypeId { get; set; }
-    public EntityType EntityType { get; set; }
+    public SystemPKSSS.Models.EntityType EntityType { get; set; }
 
     public int ServiceId { get; set; }
     public Service Service { get; set; }

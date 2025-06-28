@@ -1,13 +1,22 @@
-import {EntityAttributeValue, AttributeDefinition} from "../AttributeDefinitions/attributeDefinitionsModel";
+export interface EntityAttributeValue {
+  attributeDefinitionId: number;
+  valueString?: string;
+  valueNumber?: number;
+  valueDate?: string;
+  valueBoolean?: boolean;
+  valueFileId?: number;
+}
 
 export interface Entity {
   id: number;
   entityTypeId: number;
   serviceId: number;
-  createdAt: string;
+  createdAt?: string;
+  updatedAt?: string;
   deletedAt?: string;
-  updatedAt: string;
-
-    attributeValues?: EntityAttributeValue[];
+  attributeValues: EntityAttributeValue[];
 }
 
+export interface CreateEntity {
+  attributeValues: EntityAttributeValue[];
+}
