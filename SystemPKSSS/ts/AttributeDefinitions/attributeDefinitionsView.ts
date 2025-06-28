@@ -1,20 +1,27 @@
-import { loadAttributeDefinitionsByEntityType, createAttributeDefinition } from "./attributeDefinitionsApi";
-import { AttributeDefinition, NewAttributeDefinition} from "./attributeDefinitionsModel";
-import {  ATTRIBUTE_TYPE_OPTIONS, AttributeDataType } from "./attributeDefinitionsModel";
+import { renderMainNavigation } from "../core/Navigation.js";
+import { loadAttributeDefinitionsByEntityType, createAttributeDefinition } from "./attributeDefinitionsApi.js";
+import { AttributeDefinition, NewAttributeDefinition} from "./attributeDefinitionsModel.js";
+import {  ATTRIBUTE_TYPE_OPTIONS, AttributeDataType } from "./attributeDefinitionsModel.js";
 
 // Vstupní funkce pro zobrazeni rozhrani pro entity
-export function renderAttributeDefinitionTab(serviceId:number, entityTypeId: number, container: HTMLElement) {
+export function renderAttributeDefinitionTab(serviceId: number, entityTypeId: number, container: HTMLElement) {
   container.innerHTML = `
-    <h2>Seznam Vlastností entity</h2>
+    <h2>Seznam vlastností entity</h2>
     <div id="attributeDefinition-list"></div>
-    <button id="new-attributeDefinition-button">Nový Typ Vlastnosti</button>
+    <button id="new-attributeDefinition-button">Nový typ vlastnosti</button>
+    <div id="attributeDefinition-editor"></div>
   `;
 
-  document.getElementById("attributeDefinition-button")?.addEventListener("click", () => {
-    renderAttributeDefinitionForm(serviceId, entityTypeId);
+  document.getElementById("new-attributeDefinition-button")?.addEventListener("click", () => {
+    renderAttributeDefinitionForm(serviceId, entityTypeId, () => {
+      refreshAttributeDefinitionList(serviceId, entityTypeId);
+      // Po uložení skryj editor
+      const editor = document.getElementById("attributeDefinition-editor");
+      if (editor) editor.innerHTML = "";
+    });
   });
 
-  refreshAttributeDefinitionList( serviceId, entityTypeId);
+  refreshAttributeDefinitionList(serviceId, entityTypeId);
 }
 
 // Vykreslení vlastnosti v typu entity ve službě
@@ -33,7 +40,7 @@ export function refreshAttributeDefinitionList(serviceId: number, entityTypeId: 
         <div>
           <b>${attributeDefinition.name}</b><br>
          <b> ${attributeDefinition.attributeType}</b><br> 
-        <b>${!attributeDefinition.isRequired ? `neni aktivni` : `je aktivni`} </b>
+        <b>${!attributeDefinition.isRequired ? `neni povinný` : `je povinný`} </b>
         </div>
         <hr>
       `;
@@ -43,9 +50,10 @@ export function refreshAttributeDefinitionList(serviceId: number, entityTypeId: 
   });
 }
 
-// Formulář pro přidání nové definice vlastnosti
+
+
 function renderAttributeDefinitionForm(serviceId: number, entityTypeId: number, onSuccess?: () => void) {
-  const editorContainer = document.getElementById("new-attributeDefinition-button");
+  const editorContainer = document.getElementById("attributeDefinition-editor");
   if (!editorContainer) return;
 
   // Generuj select s možnostmi typů vlastností
@@ -74,21 +82,20 @@ function renderAttributeDefinitionForm(serviceId: number, entityTypeId: number, 
     const name = (document.getElementById("attributeDefinition-name") as HTMLInputElement).value.trim();
     const attributeType = (document.getElementById("attributeDefinition-attributeType") as HTMLSelectElement).value as AttributeDataType;
     const description = (document.getElementById("attributeDefinition-description") as HTMLTextAreaElement).value.trim();
-
+    
     if (!name || !attributeType) {
       alert("Vyplňte název a typ vlastnosti!");
       return;
     }
 
-    // Model pro API (přidej další vlastnosti dle potřeby)
     const newAttributeDefinition: NewAttributeDefinition = {
       entityTypeId,
       name,
+      displayName: name,
       attributeType,
       isRequired: false,
       orderIndex: 0,
     };
-
     createAttributeDefinition(serviceId, entityTypeId, newAttributeDefinition)
       .then(() => {
         if (onSuccess) onSuccess();

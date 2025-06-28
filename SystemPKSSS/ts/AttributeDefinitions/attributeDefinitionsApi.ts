@@ -1,5 +1,5 @@
-import { AttributeDefinition, NewAttributeDefinition } from "./attributeDefinitionsModel";
-import { AttributeEnumValue } from "../AttributeDefinitionEnumValues/attributeEnumValuesModel";
+import { AttributeDefinition, NewAttributeDefinition } from "./attributeDefinitionsModel.js";
+import { AttributeEnumValue } from "../AttributeDefinitionEnumValues/attributeEnumValuesModel.js";
 
 // Načti všechny definice atributu v danem entity typu
 export async function loadAttributeDefinitionsByEntityType(serviceId: number, entityTypeId: number): Promise<AttributeDefinition[]> {
@@ -11,8 +11,8 @@ export async function loadAttributeDefinitionsByEntityType(serviceId: number, en
 }
 
 // Vytvoř novy attribute definition v typu entity
-export async function createAttributeDefinition(serviceId: number, entityTypeId: number, newAttributeDefinition: NewAttributeDefinition): Promise<AttributeDefinition> {
-    const response = await fetch(`/services/${serviceId}/entityTypes/${entityTypeId}`, {
+export async function createAttributeDefinition(serviceId: number, entityTypeId: number, newAttributeDefinition: NewAttributeDefinition): Promise<NewAttributeDefinition> {
+    const response = await fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/attributeDefinitions`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newAttributeDefinition)
@@ -26,19 +26,19 @@ export async function createAttributeDefinition(serviceId: number, entityTypeId:
 }
 
 //Vytvoř enum moznosti pro konkretni definici attributu
-export async function createAttributeDefinitionEnum(serviceId: number, entityTypeId: number, attributeDefinitionId: number, attributeEnumValue: AttributeEnumValue): Promise<AttributeEnumValue> {
-    const response = await fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/attributeDefinitions/${attributeDefinitionId}/attributeEnumValue`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(attributeEnumValue)
-    });
+//export async function createAttributeDefinitionEnum(serviceId: number, entityTypeId: number, attributeDefinitionId: number, attributeEnumValue: AttributeEnumValue): Promise<AttributeEnumValue> {
+//    const response = await fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/attributeDefinitions/${attributeDefinitionId}/attributeEnumValue`, {
+//        method: "POST",
+//        headers: { 'Content-Type': 'application/json' },
+//        body: JSON.stringify(attributeEnumValue)
+//    });
 
-    if (!response.ok) {
-        throw new Error("Failed to create attribute definition enum");
-    }
+//    if (!response.ok) {
+//        throw new Error("Failed to create attribute definition enum");
+//    }
 
-    return await response.json();
-}
+//    return await response.json();
+//}
 
 // //nacti detail daneho typu entity
 // export async function loadEntityTypeDetail(serviceId: number, entityTypeId: number): Promise<EntityType> {

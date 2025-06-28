@@ -1,5 +1,7 @@
 import { loadEntityTypes, createEntityType, deleteEntityType, loadEntityTypesByService, updateEntityType, loadEntityTypeDetail } from './entityTypesApi.js';
 import { EntityType, NewEntityType, UpdateEntityType } from './entityTypesModel.js';
+import { loadAttributeDefinitionsByEntityType } from '../AttributeDefinitions/attributeDefinitionsApi.js';
+import { renderMainNavigation } from '../core/Navigation.js';
 
 // Vstupní funkce pro zobrazeni rozhrani pro entity
 export function renderEntityTypeTab(serviceId: number, container: HTMLElement) {
@@ -13,7 +15,7 @@ export function renderEntityTypeTab(serviceId: number, container: HTMLElement) {
   document.getElementById("new-entityType-button")?.addEventListener("click", () => {
     renderEntityTypeForm(serviceId);
   });
-
+  
   refreshEntityTypesList(serviceId);
 }
 
@@ -126,6 +128,7 @@ function renderEntityTypeForm(serviceId: number) {
 
     createEntityType(serviceId, newEntityType).then(() => {
       refreshEntityTypesList(serviceId);
+      renderMainNavigation({ CollapseState: true });
       editorContainer.innerHTML = "";
     });
   });
@@ -163,6 +166,7 @@ function renderEntityTypeEditForm(serviceId: number, id: number) {
 
       updateEntityType(serviceId, updatedEntityType).then(() => {
         refreshEntityTypesList(serviceId);
+    renderMainNavigation({ CollapseState: true });
       });
     });
 
@@ -191,6 +195,7 @@ function renderEntityTypeDeleteForm(serviceId: number, id: number) {
     document.getElementById(`delete-button-${id}`)?.addEventListener("click", () => {
       deleteEntityType(entityType).then(() => {
         refreshEntityTypesList(serviceId);
+        renderMainNavigation({ CollapseState: true });
       });
     });
 
@@ -199,22 +204,49 @@ function renderEntityTypeDeleteForm(serviceId: number, id: number) {
     });
   });
 }
-// Detail služby (pro router)
-export function renderEntityTypeDetail(serviceId: number, id: number, container: HTMLElement) {
-  loadEntityTypeDetail(serviceId, id).then(entityType => {
-    if (!entityType) {
-      container.innerHTML = "<p>Typ Entity nenalezen.</p>";
-      return;
-    }
 
-    container.innerHTML = `
-      <h2>Jméno typu Entity: ${entityType.name}</h2>
-      <h5>Popis:</h5>${entityType.description ?? "Nezadán"}
-      <h5>Datum založení:</h5>${entityType.createdAt 
-        ? new Date(entityType.createdAt as string).toLocaleString('cs-CZ')
-        : 'Neznámé'}
-      <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#attributeDefinition" class="btn btn-secondary">Atributy typu entity</a>
+// Detail typu entity (pro router)
+export async function renderEntityTypeDetail(serviceId: number, id: number, container: HTMLElement) {
+  // Nejprve načti vše paralelně
+  const [entityType, attributeDefinitions] = await Promise.all([
+    loadEntityTypeDetail(serviceId, id),
+    loadAttributeDefinitionsByEntityType(serviceId, id)
+  ]);
+
+  // Pokud nenalezeno
+  if (!entityType) {
+    container.innerHTML = "<p>Typ Entity nenalezen.</p>";
+    return;
+  }
+
+  // Renderuj základní informace
+  container.innerHTML = `
+    <h2>Jméno typu Entity: ${entityType.name}</h2>
+    <h5>Popis:</h5>${entityType.description ?? "Nezadán"}
+    <h5>Datum založení:</h5>${entityType.createdAt 
+      ? new Date(entityType.createdAt as string).toLocaleString('cs-CZ')
+      : 'Neznámé'}
+    <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#attributedefinitions" class="btn btn-secondary">Atributy typu entity</a>
+    <div id="attributes-container"></div>
+  `;
+
+  // Najdi si místo v kontejneru pro atributy
+  const attributesContainer = container.querySelector("#attributes-container") as HTMLElement;
+
+  if (attributeDefinitions.length === 0) {
+    attributesContainer.innerHTML = "<p>Žádné atributy.</p>";
+    return;
+  }
+
+  // Vlož atributy
+  attributeDefinitions.forEach(attributeDefinition => {
+    const item = document.createElement("div");
+    item.innerHTML = `
+      <b>${attributeDefinition.name}</b><br>
+      <b>${attributeDefinition.attributeType}</b><br>
+      <b>${!attributeDefinition.isRequired ? `neni aktivni` : `je aktivni`} </b>
+      <hr>
     `;
+    attributesContainer.appendChild(item);
   });
 }
-

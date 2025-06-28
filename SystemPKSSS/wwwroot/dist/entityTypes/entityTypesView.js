@@ -1,4 +1,15 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { createEntityType, deleteEntityType, loadEntityTypesByService, updateEntityType, loadEntityTypeDetail } from './entityTypesApi.js';
+import { loadAttributeDefinitionsByEntityType } from '../AttributeDefinitions/attributeDefinitionsApi.js';
+import { renderMainNavigation } from '../core/Navigation.js';
 // Vstupní funkce pro zobrazeni rozhrani pro entity
 export function renderEntityTypeTab(serviceId, container) {
     var _a;
@@ -115,6 +126,7 @@ function renderEntityTypeForm(serviceId) {
         };
         createEntityType(serviceId, newEntityType).then(() => {
             refreshEntityTypesList(serviceId);
+            renderMainNavigation({ CollapseState: true });
             editorContainer.innerHTML = "";
         });
     });
@@ -148,6 +160,7 @@ function renderEntityTypeEditForm(serviceId, id) {
                 auditable: true };
             updateEntityType(serviceId, updatedEntityType).then(() => {
                 refreshEntityTypesList(serviceId);
+                renderMainNavigation({ CollapseState: true });
             });
         });
         (_c = document.getElementById(`cancel-edit-button-${id}`)) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => {
@@ -174,6 +187,7 @@ function renderEntityTypeDeleteForm(serviceId, id) {
         (_a = document.getElementById(`delete-button-${id}`)) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
             deleteEntityType(entityType).then(() => {
                 refreshEntityTypesList(serviceId);
+                renderMainNavigation({ CollapseState: true });
             });
         });
         (_b = document.getElementById(`cancel-delete-button-${id}`)) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => {
@@ -181,21 +195,46 @@ function renderEntityTypeDeleteForm(serviceId, id) {
         });
     });
 }
-// Detail služby (pro router)
+// Detail typu entity (pro router)
 export function renderEntityTypeDetail(serviceId, id, container) {
-    loadEntityTypeDetail(serviceId, id).then(entityType => {
+    return __awaiter(this, void 0, void 0, function* () {
         var _a;
+        // Nejprve načti vše paralelně
+        const [entityType, attributeDefinitions] = yield Promise.all([
+            loadEntityTypeDetail(serviceId, id),
+            loadAttributeDefinitionsByEntityType(serviceId, id)
+        ]);
+        // Pokud nenalezeno
         if (!entityType) {
             container.innerHTML = "<p>Typ Entity nenalezen.</p>";
             return;
         }
+        // Renderuj základní informace
         container.innerHTML = `
-      <h2>Jméno typu Entity: ${entityType.name}</h2>
-      <h5>Popis:</h5>${(_a = entityType.description) !== null && _a !== void 0 ? _a : "Nezadán"}
-      <h5>Datum založení:</h5>${entityType.createdAt
+    <h2>Jméno typu Entity: ${entityType.name}</h2>
+    <h5>Popis:</h5>${(_a = entityType.description) !== null && _a !== void 0 ? _a : "Nezadán"}
+    <h5>Datum založení:</h5>${entityType.createdAt
             ? new Date(entityType.createdAt).toLocaleString('cs-CZ')
             : 'Neznámé'}
-      <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#attributeDefinition" class="btn btn-secondary">Atributy typu entity</a>
+    <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#attributedefinitions" class="btn btn-secondary">Atributy typu entity</a>
+    <div id="attributes-container"></div>
+  `;
+        // Najdi si místo v kontejneru pro atributy
+        const attributesContainer = container.querySelector("#attributes-container");
+        if (attributeDefinitions.length === 0) {
+            attributesContainer.innerHTML = "<p>Žádné atributy.</p>";
+            return;
+        }
+        // Vlož atributy
+        attributeDefinitions.forEach(attributeDefinition => {
+            const item = document.createElement("div");
+            item.innerHTML = `
+      <b>${attributeDefinition.name}</b><br>
+      <b>${attributeDefinition.attributeType}</b><br>
+      <b>${!attributeDefinition.isRequired ? `neni aktivni` : `je aktivni`} </b>
+      <hr>
     `;
+            attributesContainer.appendChild(item);
+        });
     });
 }

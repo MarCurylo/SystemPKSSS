@@ -74,7 +74,7 @@ export function deleteEntityType(entityType) {
         if (!entityType.id) {
             throw new Error("EntityType ID is required for delete");
         }
-        const response = yield fetch(`/entityTypes/${entityType.id}`, { method: "DELETE" });
+        const response = yield fetch(`services/${entityType.serviceId}/entityTypes/${entityType.id}`, { method: "DELETE" });
         if (!response.ok) {
             throw new Error("Failed to delete entity type");
         }

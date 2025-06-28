@@ -1,15 +1,22 @@
-import { loadAttributeDefinitionsByEntityType, createAttributeDefinition } from "./attributeDefinitionsApi";
-import { ATTRIBUTE_TYPE_OPTIONS } from "./attributeDefinitionsModel";
+import { loadAttributeDefinitionsByEntityType, createAttributeDefinition } from "./attributeDefinitionsApi.js";
+import { ATTRIBUTE_TYPE_OPTIONS } from "./attributeDefinitionsModel.js";
 // Vstupní funkce pro zobrazeni rozhrani pro entity
 export function renderAttributeDefinitionTab(serviceId, entityTypeId, container) {
     var _a;
     container.innerHTML = `
-    <h2>Seznam Vlastností entity</h2>
+    <h2>Seznam vlastností entity</h2>
     <div id="attributeDefinition-list"></div>
-    <button id="new-attributeDefinition-button">Nový Typ Vlastnosti</button>
+    <button id="new-attributeDefinition-button">Nový typ vlastnosti</button>
+    <div id="attributeDefinition-editor"></div>
   `;
-    (_a = document.getElementById("attributeDefinition-button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-        renderAttributeDefinitionForm(serviceId, entityTypeId);
+    (_a = document.getElementById("new-attributeDefinition-button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+        renderAttributeDefinitionForm(serviceId, entityTypeId, () => {
+            refreshAttributeDefinitionList(serviceId, entityTypeId);
+            // Po uložení skryj editor
+            const editor = document.getElementById("attributeDefinition-editor");
+            if (editor)
+                editor.innerHTML = "";
+        });
     });
     refreshAttributeDefinitionList(serviceId, entityTypeId);
 }
@@ -27,7 +34,7 @@ export function refreshAttributeDefinitionList(serviceId, entityTypeId) {
         <div>
           <b>${attributeDefinition.name}</b><br>
          <b> ${attributeDefinition.attributeType}</b><br> 
-        <b>${!attributeDefinition.isRequired ? `neni aktivni` : `je aktivni`} </b>
+        <b>${!attributeDefinition.isRequired ? `neni povinný` : `je povinný`} </b>
         </div>
         <hr>
       `;
@@ -35,10 +42,9 @@ export function refreshAttributeDefinitionList(serviceId, entityTypeId) {
         });
     });
 }
-// Formulář pro přidání nové definice vlastnosti
 function renderAttributeDefinitionForm(serviceId, entityTypeId, onSuccess) {
     var _a;
-    const editorContainer = document.getElementById("new-attributeDefinition-button");
+    const editorContainer = document.getElementById("attributeDefinition-editor");
     if (!editorContainer)
         return;
     // Generuj select s možnostmi typů vlastností
@@ -67,10 +73,10 @@ function renderAttributeDefinitionForm(serviceId, entityTypeId, onSuccess) {
             alert("Vyplňte název a typ vlastnosti!");
             return;
         }
-        // Model pro API (přidej další vlastnosti dle potřeby)
         const newAttributeDefinition = {
             entityTypeId,
             name,
+            displayName: name,
             attributeType,
             isRequired: false,
             orderIndex: 0,

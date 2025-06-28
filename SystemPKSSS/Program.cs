@@ -24,4 +24,4 @@ app.MapEntityTypesEndpoints();
 app.MapAttributeDefinitionsEndpoints();
 
 //Start
-app.Run();
+  app.Run();

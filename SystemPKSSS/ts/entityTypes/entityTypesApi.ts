@@ -65,7 +65,7 @@ export async function deleteEntityType(entityType: UpdateEntityType): Promise<vo
         throw new Error("EntityType ID is required for delete");
     }
 
-    const response = await fetch(`/entityTypes/${entityType.id}`, { method: "DELETE" });
+    const response = await fetch(`services/${entityType.serviceId}/entityTypes/${entityType.id}`, { method: "DELETE" });
 
     if (!response.ok) {
         throw new Error("Failed to delete entity type");

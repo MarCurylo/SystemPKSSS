@@ -7,8 +7,9 @@ export interface EntityType {
   editable: boolean;
   exportable: boolean;
   auditable: boolean;
+  orderIndex: number;
   createdAt: string;
 }
 
-export type NewEntityType = Omit<EntityType, 'id' | 'createdAt'>;
-export type UpdateEntityType = Omit<EntityType, 'createdAt'>;
+export type NewEntityType = Omit<EntityType, 'id' | 'createdAt' | 'orderIndex'>;
+export type UpdateEntityType = Omit<EntityType, 'createdAt' | 'orderIndex'>;

@@ -1,4 +1,4 @@
-import { AttributeEnumValue } from "../AttributeDefinitionEnumValues/attributeEnumValuesModel";
+import { AttributeEnumValue } from "../AttributeDefinitionEnumValues/attributeEnumValuesModel.js";
 export type AttributeDataType =
   | "String"
   | "Number"
