@@ -2,6 +2,7 @@
 using SystemPKSSS.Models;
 using SystemPKSSSS.Data;
 using SystemPKSSS.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SystemPKSSSS.Endpoints;
 
@@ -10,7 +11,7 @@ public static class ServicesEndpoints
     public static void MapServicesEndpoints(this IEndpointRouteBuilder app)
     {
         // Vytvoření služby
-        app.MapPost("/services", async (CreateServiceDto dto, ApplicationDbContext db) =>
+        app.MapPost("/services", [Authorize(Roles = "Admin")] async (CreateServiceDto dto, ApplicationDbContext db) =>
         {
             var service = new Service
             {
@@ -69,7 +70,7 @@ public static class ServicesEndpoints
         });
 
         // Editace služby
-        app.MapPut("/services/{id}", async (int id, UpdateServiceDto dto, ApplicationDbContext db) =>
+        app.MapPut("/services/{id}", [Authorize(Roles = "Admin")] async (int id, UpdateServiceDto dto, ApplicationDbContext db) =>
         {
             var service = await db.Services.FindAsync(id);
             if (service is null) return Results.NotFound();
@@ -93,7 +94,7 @@ public static class ServicesEndpoints
         });
 
         // Aktivace / deaktivace služby
-        app.MapPut("/services/{id}/activate", async (int id, bool activate, ApplicationDbContext db) =>
+        app.MapPut("/services/{id}/activate", [Authorize(Roles = "Admin")] async (int id, bool activate, ApplicationDbContext db) =>
         {
             var service = await db.Services.FindAsync(id);
             if (service is null) return Results.NotFound();
@@ -113,7 +114,7 @@ public static class ServicesEndpoints
         });
 
         // Mazání služby
-        app.MapDelete("/services/{id}", async (int id, ApplicationDbContext db) =>
+        app.MapDelete("/services/{id}", [Authorize(Roles = "Admin")] async (int id, ApplicationDbContext db) =>
         {
             var service = await db.Services.FindAsync(id);
             if (service is null) return Results.NotFound();

@@ -48,3 +48,19 @@ export function loadEntityDetail(serviceId, entityTypeId, entityId) {
         return yield response.json();
     });
 }
+export function updateEntity(serviceId, entityTypeId, entityId, updatedEntity // stejné jako při vytváření: { attributeValues: EntityAttributeValue[] }
+) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/entities/${entityId}`, {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedEntity)
+        });
+        if (!response.ok) {
+            const text = yield response.text();
+            console.error("Failed to update entity:", text);
+            throw new Error(text);
+        }
+        return yield response.json();
+    });
+}

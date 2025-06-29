@@ -8,7 +8,7 @@ export type AttributeDataType =
   | "File"
   | "Image";
 
-  export const ATTRIBUTE_TYPE_OPTIONS = [
+export const ATTRIBUTE_TYPE_OPTIONS = [
   { value: "String", label: "Text" },
   { value: "Number", label: "Číslo" },
   { value: "Date", label: "Datum" },
@@ -27,6 +27,7 @@ export interface AttributeDefinition {
   enumValues?: AttributeEnumValue[];
   isRequired: boolean;
   orderIndex: number;
+  isDisplayName: boolean; // <-- přidáno!
   createdAt: string;
 }
 

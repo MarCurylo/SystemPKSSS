@@ -11,7 +11,7 @@ export async function loadAttributeDefinitionsByEntityType(serviceId: number, en
 }
 
 // Vytvoř novy attribute definition v typu entity
-export async function createAttributeDefinition(serviceId: number, entityTypeId: number, newAttributeDefinition: NewAttributeDefinition): Promise<NewAttributeDefinition> {
+export async function createAttributeDefinition(serviceId: number, entityTypeId: number, newAttributeDefinition: NewAttributeDefinition): Promise<AttributeDefinition> {
     const response = await fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/attributeDefinitions`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
@@ -24,27 +24,40 @@ export async function createAttributeDefinition(serviceId: number, entityTypeId:
 
     return await response.json();
 }
+// Smaž attribute definition v daném entity typu
+export async function deleteAttributeDefinition(
+    serviceId: number,
+    entityTypeId: number,
+    attributeDefinitionId: number
+): Promise<void> {
+    const response = await fetch(
+        `/services/${serviceId}/entityTypes/${entityTypeId}/attributeDefinitions/${attributeDefinitionId}`,
+        {
+            method: "DELETE"
+        }
+    );
+    if (!response.ok) {
+        throw new Error("Failed to delete attribute definition");
+    }
+}
 
-//Vytvoř enum moznosti pro konkretni definici attributu
-//export async function createAttributeDefinitionEnum(serviceId: number, entityTypeId: number, attributeDefinitionId: number, attributeEnumValue: AttributeEnumValue): Promise<AttributeEnumValue> {
-//    const response = await fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/attributeDefinitions/${attributeDefinitionId}/attributeEnumValue`, {
-//        method: "POST",
-//        headers: { 'Content-Type': 'application/json' },
-//        body: JSON.stringify(attributeEnumValue)
-//    });
-
-//    if (!response.ok) {
-//        throw new Error("Failed to create attribute definition enum");
-//    }
-
-//    return await response.json();
-//}
-
-// //nacti detail daneho typu entity
-// export async function loadEntityTypeDetail(serviceId: number, entityTypeId: number): Promise<EntityType> {
-//     const response = await fetch(`/services/${serviceId}/entityTypes/${entityTypeId}`);
-//     if (!response.ok) {
-//         throw new Error("Failed to fetch entity type");
-//     }
-//     return await response.json();
-// }
+// PATCH endpoint pro nastavení isDisplayName (je-li v backendu)
+// Pokud nemáš, tento kód můžeš použít později pro PATCH volání
+export async function patchIsDisplayName(
+    serviceId: number,
+    entityTypeId: number,
+    attributeDefinitionId: number,
+    isDisplayName: boolean
+): Promise<void> {
+    const response = await fetch(
+        `/services/${serviceId}/entityTypes/${entityTypeId}/attributeDefinitions/${attributeDefinitionId}`,
+        {
+            method: "PATCH",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ isDisplayName })
+        }
+    );
+    if (!response.ok) {
+        throw new Error("Failed to update display as name");
+    }
+}

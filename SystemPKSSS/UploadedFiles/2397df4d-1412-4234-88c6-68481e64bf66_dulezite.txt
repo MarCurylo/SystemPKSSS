@@ -1,0 +1,2 @@
+pred commitem
+zmenit path z C na D 

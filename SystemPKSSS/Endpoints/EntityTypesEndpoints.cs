@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SystemPKSSS.Models;
 using SystemPKSSSS.Data;
 using SystemPKSSS.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SystemPKSSSS.Endpoints;
 
@@ -10,7 +11,7 @@ public static class EntityTypesEndpoints
     public static void MapEntityTypesEndpoints(this IEndpointRouteBuilder app)
     {
         // Vytvoření typu entity
-        app.MapPost("/services/{serviceId}/entityTypes", async (int serviceId, CreateEntityTypeDto dto, ApplicationDbContext db) =>
+        app.MapPost("/services/{serviceId}/entityTypes", [Authorize(Roles = "Admin")] async (int serviceId, CreateEntityTypeDto dto, ApplicationDbContext db) =>
         {
             var serviceExists = await db.Services.AnyAsync(s => s.Id == serviceId);
             if (!serviceExists)
@@ -89,7 +90,7 @@ public static class EntityTypesEndpoints
         });
 
         // Editace typu entity
-        app.MapPut("/services/{serviceId}/entityTypes/{entityTypeId}",
+        app.MapPut("/services/{serviceId}/entityTypes/{entityTypeId}", [Authorize(Roles = "Admin")]
             async (int serviceId, int entityTypeId, UpdateEntityTypeDto dto, ApplicationDbContext db) =>
         {
             var entityType = await db.EntityTypes.FindAsync(entityTypeId);
@@ -121,8 +122,8 @@ public static class EntityTypesEndpoints
             return Results.Ok(result);
         });
 
-        // Nastavení visibility (bonus)
-        app.MapPut("/entityTypes/{id}/visible", async (int id, bool visible, ApplicationDbContext db) =>
+        // Nastavení visibility
+        app.MapPut("/entityTypes/{id}/visible", [Authorize(Roles = "Admin")] async (int id, bool visible, ApplicationDbContext db) =>
         {
             var entityType = await db.EntityTypes.FindAsync(id);
             if (entityType is null) return Results.NotFound();
@@ -144,7 +145,7 @@ public static class EntityTypesEndpoints
         });
 
         // Mazání typu entity
-        app.MapDelete("/services/{serviceId}/entityTypes/{entityTypeId}", async (int serviceId, int entityTypeId, ApplicationDbContext db) =>
+        app.MapDelete("/services/{serviceId}/entityTypes/{entityTypeId}", [Authorize(Roles = "Admin")] async (int serviceId, int entityTypeId, ApplicationDbContext db) =>
         {
             var entityType = await db.EntityTypes.FindAsync(entityTypeId);
             if (entityType is null) return Results.NotFound();

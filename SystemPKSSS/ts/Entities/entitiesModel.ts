@@ -4,7 +4,6 @@ export interface EntityAttributeValue {
   valueNumber?: number;
   valueDate?: string;
   valueBoolean?: boolean;
-  valueFileId?: number;
 }
 
 export interface Entity {

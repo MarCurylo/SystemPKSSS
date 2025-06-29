@@ -31,23 +31,28 @@ export function createAttributeDefinition(serviceId, entityTypeId, newAttributeD
         return yield response.json();
     });
 }
-//Vytvoř enum moznosti pro konkretni definici attributu
-//export async function createAttributeDefinitionEnum(serviceId: number, entityTypeId: number, attributeDefinitionId: number, attributeEnumValue: AttributeEnumValue): Promise<AttributeEnumValue> {
-//    const response = await fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/attributeDefinitions/${attributeDefinitionId}/attributeEnumValue`, {
-//        method: "POST",
-//        headers: { 'Content-Type': 'application/json' },
-//        body: JSON.stringify(attributeEnumValue)
-//    });
-//    if (!response.ok) {
-//        throw new Error("Failed to create attribute definition enum");
-//    }
-//    return await response.json();
-//}
-// //nacti detail daneho typu entity
-// export async function loadEntityTypeDetail(serviceId: number, entityTypeId: number): Promise<EntityType> {
-//     const response = await fetch(`/services/${serviceId}/entityTypes/${entityTypeId}`);
-//     if (!response.ok) {
-//         throw new Error("Failed to fetch entity type");
-//     }
-//     return await response.json();
-// }
+// Smaž attribute definition v daném entity typu
+export function deleteAttributeDefinition(serviceId, entityTypeId, attributeDefinitionId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/attributeDefinitions/${attributeDefinitionId}`, {
+            method: "DELETE"
+        });
+        if (!response.ok) {
+            throw new Error("Failed to delete attribute definition");
+        }
+    });
+}
+// PATCH endpoint pro nastavení isDisplayName (je-li v backendu)
+// Pokud nemáš, tento kód můžeš použít později pro PATCH volání
+export function patchIsDisplayName(serviceId, entityTypeId, attributeDefinitionId, isDisplayName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/attributeDefinitions/${attributeDefinitionId}`, {
+            method: "PATCH",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ isDisplayName })
+        });
+        if (!response.ok) {
+            throw new Error("Failed to update display as name");
+        }
+    });
+}

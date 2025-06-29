@@ -19,8 +19,6 @@ public enum AttributeDataType
     Boolean,
     [Description("Výběr z možností")]
     Enum,
-    [Description("Soubor")]
-    File,
     [Description("Obrázek")]
     Image
 }
@@ -42,6 +40,7 @@ public class AttributeDefinition
     public AttributeDataType AttributeType { get; set; }
     public bool IsRequired { get; set; }
     public int OrderIndex { get; set; }
+        public bool IsDisplayName { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
     public ICollection<AttributeEnumValue> EnumValues { get; set; } = new List<AttributeEnumValue>();
 

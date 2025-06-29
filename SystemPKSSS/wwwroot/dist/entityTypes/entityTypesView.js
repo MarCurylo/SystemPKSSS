@@ -10,106 +10,155 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { loadEntityTypes, createEntityType, deleteEntityType, updateEntityType, loadEntityType as loadEntityTypeDetail, } from './entityTypesApi.js';
 import { loadAttributeDefinitionsByEntityType } from '../AttributeDefinitions/attributeDefinitionsApi.js';
 import { renderMainNavigation } from '../core/Navigation.js';
-// Vstupní funkce pro zobrazeni rozhrani pro entity
+import { currentUserRoles } from '../app.js'; // uprav cestu k aktuálnímu uložení
 export function renderEntityTypeTab(serviceId, container) {
     var _a;
     container.innerHTML = `
-    <h2>Seznam Typů Entit</h2>
-    <div id="entityType-list"></div>
-    <div id="new-entityType-editor"></div>
-    <button id="new-entityType-button">Nový Typ Entity</button>
+    <h2>Seznam typů entit</h2>
+    <div id="entityType-list" style="margin-bottom:2em;"></div>
+    ${currentUserRoles.includes("Admin")
+        ? `<div><button id="new-entityType-button" class="button">Nový typ entity</button></div>
+           <div id="new-entityType-editor"></div>`
+        : ""}
   `;
-    (_a = document.getElementById("new-entityType-button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-        renderEntityTypeForm(serviceId);
-    });
+    if (currentUserRoles.includes("Admin")) {
+        let open = false;
+        (_a = document.getElementById("new-entityType-button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+            open = !open;
+            const editor = document.getElementById("new-entityType-editor");
+            if (editor) {
+                if (open) {
+                    renderEntityTypeForm(serviceId, editor, () => {
+                        open = false;
+                    });
+                }
+                else {
+                    editor.innerHTML = "";
+                }
+            }
+        });
+    }
     refreshEntityTypesList(serviceId);
 }
-// Vykreslení entit ve službě
 export function refreshEntityTypesList(serviceId) {
     const listContainer = document.getElementById("entityType-list");
     if (!listContainer)
         return;
     loadEntityTypes(serviceId).then(entityTypes => {
         listContainer.innerHTML = "";
+        if (entityTypes.length === 0) {
+            listContainer.innerHTML = "<p>Žádné typy entit.</p>";
+            return;
+        }
         entityTypes.forEach(entityType => {
+            const canEdit = currentUserRoles.includes("Admin");
             const item = document.createElement("div");
+            item.classList.add("editor-block", "animated-fadein");
+            item.style.marginBottom = "1.2em";
             item.innerHTML = `
-        <div>
-          <b>${entityType.name}</b><br>
-          ${entityType.description ? `Popis: ${entityType.description}<br>` : ""} 
-          Vytvořeno: ${entityType.createdAt
-                ? new Date(entityType.createdAt).toLocaleString('cs-CZ')
-                : 'Neznámé'}<br>
-
-          <button data-id="${entityType.id}" class="edit-btn">Edit</button>
-          <button data-id="${entityType.id}" class="delete-btn">Smazat</button>
-          <button data-id="${entityType.id}" class="detail-btn">Detail Entity</button>
-          <div id="editor-${entityType.id}" class="inline-editor"></div>
-          <div id="delete-${entityType.id}" class="inline-delete"></div>
+        <div style="font-size:1.22em; font-weight:700; margin-bottom:0.6em;">
+          ${entityType.name}
         </div>
-        <hr>
+        <div style="margin-bottom:0.5em;">
+          <strong>Popis:</strong> ${entityType.description ? entityType.description : "<i>Nezadán</i>"}
+        </div>
+        <div style="margin-bottom:0.5em;">
+          <strong>Datum založení:</strong>
+          ${entityType.createdAt ? new Date(entityType.createdAt).toLocaleString('cs-CZ') : 'Neznámé'}
+        </div>
+        <div style="margin-bottom:0.5em;">
+          <strong>Poznámky povoleny:</strong>
+          <span style="color:${entityType.auditable ? '#7da308' : '#b38d0e'}">
+            ${entityType.auditable ? "Ano" : "Ne"}
+          </span>
+        </div>
+        <div style="margin-bottom:0.8em;">
+          ${canEdit ? `<button data-id="${entityType.id}" class="button edit-btn">Edit</button>` : ""}
+          ${canEdit ? `<button data-id="${entityType.id}" class="button danger delete-btn">Smazat</button>` : ""}
+          <button data-id="${entityType.id}" class="button secondary detail-btn">Detail typu</button>
+        </div>
+        <div id="editor-${entityType.id}" class="inline-editor"></div>
+        <div id="delete-${entityType.id}" class="inline-delete"></div>
       `;
             listContainer.appendChild(item);
         });
-        // Eventy:
-        document.querySelectorAll(".edit-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const id = parseInt(e.target.dataset.id);
-                const editorContainer = document.getElementById(`editor-${id}`);
-                if (!editorContainer)
-                    return;
-                if (editorContainer.innerHTML.trim() !== "") {
-                    editorContainer.innerHTML = "";
-                }
-                else {
-                    renderEntityTypeEditForm(serviceId, id);
-                }
+        if (currentUserRoles.includes("Admin")) {
+            document.querySelectorAll(".edit-btn").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    const editorContainer = document.getElementById(`editor-${id}`);
+                    if (!editorContainer)
+                        return;
+                    if (editorContainer.innerHTML.trim() !== "") {
+                        editorContainer.innerHTML = "";
+                    }
+                    else {
+                        renderEntityTypeEditForm(serviceId, id, editorContainer);
+                    }
+                });
             });
-        });
+            document.querySelectorAll(".delete-btn").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    const deleteContainer = document.getElementById(`delete-${id}`);
+                    if (!deleteContainer)
+                        return;
+                    if (deleteContainer.innerHTML.trim() !== "") {
+                        deleteContainer.innerHTML = "";
+                    }
+                    else {
+                        renderEntityTypeDeleteForm(serviceId, id, deleteContainer);
+                    }
+                });
+            });
+        }
         document.querySelectorAll(".detail-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const id = parseInt(e.target.dataset.id);
                 window.location.hash = `#services#${serviceId}#entitytypes#${id}`;
             });
         });
-        document.querySelectorAll(".delete-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const id = parseInt(e.target.dataset.id);
-                const deleteContainer = document.getElementById(`delete-${id}`);
-                if (!deleteContainer)
-                    return;
-                if (deleteContainer.innerHTML.trim() !== "") {
-                    deleteContainer.innerHTML = "";
-                }
-                else {
-                    renderEntityTypeDeleteForm(serviceId, id);
-                }
-            });
-        });
     });
 }
-// Formulář pro přidání nové entityType
-function renderEntityTypeForm(serviceId) {
+function renderEntityTypeForm(serviceId, editorContainer, onClose) {
     var _a, _b;
-    const editorContainer = document.getElementById("new-entityType-editor");
-    if (!editorContainer)
+    if (!currentUserRoles.includes("Admin")) {
+        alert("Nemáte oprávnění vytvářet typy entit.");
         return;
+    }
     editorContainer.innerHTML = `
-    <h3>Nový Typ Entity</h3>
-    <form>
-      <input id="entityType-name" placeholder="Název typu entity" required><br>
-      <textarea id="entityType-description" placeholder="Popis"></textarea><br>
-      <button id="save-entityType-button" type="button">Uložit</button>
-      <button id="cancel-entityType-button" type="button">Zrušit</button>
-    </form>
+    <div class="editor-block animated-fadein" style="max-width:380px;">
+      <h3 style="margin-top:0;">Nový typ entity</h3>
+      <form>
+        <div style="margin-bottom:1.1em;">
+          <label style="font-weight:600;display:block;margin-bottom:0.3em;">Název:</label>
+          <input id="entityType-name" placeholder="Název typu entity" required class="input-lg" style="width:100%;">
+        </div>
+        <div style="margin-bottom:1.1em;">
+          <label style="font-weight:600;display:block;margin-bottom:0.3em;">Popis:</label>
+          <textarea id="entityType-description" placeholder="Popis" class="input-lg" style="width:100%;"></textarea>
+        </div>
+        <div style="margin-bottom:1.1em;">
+          <label>
+            <input type="checkbox" id="entityType-auditable" checked>
+            Tento typ entity umožňuje poznámky
+          </label>
+        </div>
+        <div style="margin-top:1.1em;display:flex;gap:1em;">
+          <button id="save-entityType-button" type="button" class="button">Uložit</button>
+          <button id="cancel-entityType-button" type="button" class="button secondary">Zrušit</button>
+        </div>
+      </form>
+    </div>
   `;
     (_a = document.getElementById("save-entityType-button")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
         const name = document.getElementById("entityType-name").value;
         if (!name) {
-            alert("název typy entity nesmi byt prazdny!");
+            alert("Název typu entity nesmí být prázdný!");
             return;
         }
         const description = document.getElementById("entityType-description").value;
+        const auditable = document.getElementById("entityType-auditable").checked;
         const newEntityType = {
             name,
             description,
@@ -117,38 +166,59 @@ function renderEntityTypeForm(serviceId) {
             visible: true,
             editable: true,
             exportable: true,
-            auditable: true
+            auditable
         };
         createEntityType(serviceId, newEntityType).then(() => {
             refreshEntityTypesList(serviceId);
             renderMainNavigation({ CollapseState: true });
             editorContainer.innerHTML = "";
+            if (onClose)
+                onClose();
         });
     });
     (_b = document.getElementById("cancel-entityType-button")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => {
         editorContainer.innerHTML = "";
+        if (onClose)
+            onClose();
     });
 }
-// Inline edit formulář
-function renderEntityTypeEditForm(serviceId, id) {
-    const editorContainer = document.getElementById(`editor-${id}`);
-    if (!editorContainer)
+function renderEntityTypeEditForm(serviceId, id, editorContainer) {
+    if (!currentUserRoles.includes("Admin")) {
+        alert("Nemáte oprávnění upravovat typy entit.");
         return;
+    }
     loadEntityTypes(serviceId).then(entityTypes => {
         var _a, _b, _c;
         const entityType = entityTypes.find(e => e.id === id);
         if (!entityType)
             return;
         editorContainer.innerHTML = `
-      <h4>Editace:</h4>
-      <input id="edit-name-${id}" value="${entityType.name}"><br>
-      <textarea id="edit-description-${id}">${(_a = entityType.description) !== null && _a !== void 0 ? _a : ""}</textarea><br>
-      <button id="save-edit-button-${id}" type="button">Uložit změny</button>
-      <button id="cancel-edit-button-${id}" type="button">Zrušit</button>
+      <div class="editor-block animated-fadein" style="max-width:380px;">
+        <h4>Editace typu entity</h4>
+        <div style="margin-bottom:1.1em;">
+          <label style="font-weight:600;display:block;margin-bottom:0.3em;">Název:</label>
+          <input id="edit-name-${id}" value="${entityType.name}" class="input-lg" style="width:100%;">
+        </div>
+        <div style="margin-bottom:1.1em;">
+          <label style="font-weight:600;display:block;margin-bottom:0.3em;">Popis:</label>
+          <textarea id="edit-description-${id}" class="input-lg" style="width:100%;">${(_a = entityType.description) !== null && _a !== void 0 ? _a : ""}</textarea>
+        </div>
+        <div style="margin-bottom:1.1em;">
+          <label>
+            <input type="checkbox" id="edit-auditable-${id}" ${entityType.auditable ? "checked" : ""}>
+            Tento typ entity umožňuje poznámky
+          </label>
+        </div>
+        <div style="margin-top:1.1em;display:flex;gap:1em;">
+          <button id="save-edit-button-${id}" type="button" class="button">Uložit změny</button>
+          <button id="cancel-edit-button-${id}" type="button" class="button secondary">Zrušit</button>
+        </div>
+      </div>
     `;
         (_b = document.getElementById(`save-edit-button-${id}`)) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => {
             const name = document.getElementById(`edit-name-${id}`).value;
             const description = document.getElementById(`edit-description-${id}`).value;
+            const auditable = document.getElementById(`edit-auditable-${id}`).checked;
             const updatedEntityType = {
                 id,
                 serviceId,
@@ -157,11 +227,12 @@ function renderEntityTypeEditForm(serviceId, id) {
                 visible: true,
                 editable: true,
                 exportable: true,
-                auditable: true
+                auditable
             };
             updateEntityType(serviceId, id, updatedEntityType).then(() => {
                 refreshEntityTypesList(serviceId);
                 renderMainNavigation({ CollapseState: true });
+                editorContainer.innerHTML = "";
             });
         });
         (_c = document.getElementById(`cancel-edit-button-${id}`)) === null || _c === void 0 ? void 0 : _c.addEventListener("click", () => {
@@ -169,26 +240,33 @@ function renderEntityTypeEditForm(serviceId, id) {
         });
     });
 }
-// Inline delete formulář
-function renderEntityTypeDeleteForm(serviceId, id) {
-    const deleteContainer = document.getElementById(`delete-${id}`);
-    if (!deleteContainer)
+function renderEntityTypeDeleteForm(serviceId, id, deleteContainer) {
+    if (!currentUserRoles.includes("Admin")) {
+        alert("Nemáte oprávnění mazat typy entit.");
         return;
+    }
     loadEntityTypes(serviceId).then(entityTypes => {
         var _a, _b;
         const entityType = entityTypes.find(e => e.id === id);
         if (!entityType)
             return;
         deleteContainer.innerHTML = `
-      <h4>Potvrzení mazání:</h4>
-      Opravdu chcete smazat typ entity: <b>${entityType.name}</b>?<br>
-      <button id="delete-button-${id}" type="button">Smazat</button>
-      <button id="cancel-delete-button-${id}" type="button">Zrušit</button>
+      <div class="editor-block animated-fadein" style="max-width:380px;">
+        <h4>Potvrzení mazání</h4>
+        <div style="margin-bottom:1.2em;">
+          Opravdu chcete smazat typ entity: <b>${entityType.name}</b>?
+        </div>
+        <div style="display:flex;gap:1em;">
+          <button id="delete-button-${id}" type="button" class="button danger">Smazat</button>
+          <button id="cancel-delete-button-${id}" type="button" class="button secondary">Zrušit</button>
+        </div>
+      </div>
     `;
         (_a = document.getElementById(`delete-button-${id}`)) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
             deleteEntityType(serviceId, id).then(() => {
                 refreshEntityTypesList(serviceId);
                 renderMainNavigation({ CollapseState: true });
+                deleteContainer.innerHTML = "";
             });
         });
         (_b = document.getElementById(`cancel-delete-button-${id}`)) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => {
@@ -196,11 +274,9 @@ function renderEntityTypeDeleteForm(serviceId, id) {
         });
     });
 }
-// Detail typu entity (pro router)
 export function renderEntityTypeDetail(serviceId, id, container) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a;
-        // Nejprve načti vše paralelně
         const [entityType, attributeDefinitions] = yield Promise.all([
             loadEntityTypeDetail(serviceId, id),
             loadAttributeDefinitionsByEntityType(serviceId, id)
@@ -210,30 +286,38 @@ export function renderEntityTypeDetail(serviceId, id, container) {
             return;
         }
         container.innerHTML = `
-    <h2>Jméno typu Entity: ${entityType.name}</h2>
-    <h5>Popis:</h5>${(_a = entityType.description) !== null && _a !== void 0 ? _a : "Nezadán"}
-    <h5>Datum založení:</h5>${entityType.createdAt
+    <div class="editor-block animated-fadein" style="max-width:580px;">
+      <h2 style="margin-top:0;">${entityType.name}</h2>
+      <div style="margin-bottom:1em;"><strong>Popis:</strong> ${(_a = entityType.description) !== null && _a !== void 0 ? _a : "<i>Nezadán</i>"}</div>
+      <div style="margin-bottom:1em;">
+        <strong>Poznámky povoleny:</strong>
+        <span style="color:${entityType.auditable ? "#7da308" : "#b38d0e"};">${entityType.auditable ? "Ano" : "Ne"}</span>
+      </div>
+      <div style="margin-bottom:1em;">
+        <strong>Datum založení:</strong> ${entityType.createdAt
             ? new Date(entityType.createdAt).toLocaleString('cs-CZ')
             : 'Neznámé'}
-    <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#attributedefinitions" class="btn btn-secondary">Atributy typu entity</a>
-    <div id="attributes-container"></div>
-        <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#entities" class="btn btn-secondary">Entity</a>
-    <div id="attributes-container"></div>
+      </div>
+      <div style="margin-bottom:1.5em;">
+        <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#attributedefinitions" class="button secondary">Atributy typu entity</a>
+        <a href="#services#${entityType.serviceId}#entitytypes#${entityType.id}#entities" class="button secondary" style="margin-left:1.1em;">Entity</a>
+      </div>
+      <div id="attributes-container" style="margin-top:1.3em;"></div>
+    </div>
   `;
         const attributesContainer = container.querySelector("#attributes-container");
-        if (attributeDefinitions.length === 0) {
+        if (!attributeDefinitions || attributeDefinitions.length === 0) {
             attributesContainer.innerHTML = "<p>Žádné atributy.</p>";
             return;
         }
-        attributeDefinitions.forEach(attributeDefinition => {
-            const item = document.createElement("div");
-            item.innerHTML = `
-      <b>${attributeDefinition.name}</b><br>
-      <b>${attributeDefinition.attributeType}</b><br>
-      <b>${!attributeDefinition.isRequired ? `neni aktivni` : `je aktivni`} </b>
-      <hr>
-    `;
-            attributesContainer.appendChild(item);
-        });
+        attributesContainer.innerHTML = attributeDefinitions.map(attributeDefinition => `
+    <div style="margin-bottom:0.85em;">
+      <strong>${attributeDefinition.name}</strong>
+      <span style="margin-left:1em;font-size:0.97em;color:#95702c;">${attributeDefinition.attributeType}</span>
+      <span style="margin-left:1.1em;color:${attributeDefinition.isRequired ? "#7da308" : "#b38d0e"};">
+        ${attributeDefinition.isRequired ? "Povinný" : "Nepovinný"}
+      </span>
+    </div>
+  `).join("");
     });
 }

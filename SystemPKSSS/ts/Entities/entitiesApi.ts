@@ -43,3 +43,27 @@ export async function loadEntityDetail(serviceId: number, entityTypeId: number, 
     }
     return await response.json();
 }
+
+export async function updateEntity(
+    serviceId: number,
+    entityTypeId: number,
+    entityId: number,
+    updatedEntity: CreateEntity // stejné jako při vytváření: { attributeValues: EntityAttributeValue[] }
+): Promise<Entity> {
+    const response = await fetch(
+        `/services/${serviceId}/entityTypes/${entityTypeId}/entities/${entityId}`,
+        {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedEntity)
+        }
+    );
+
+    if (!response.ok) {
+        const text = await response.text();
+        console.error("Failed to update entity:", text);
+        throw new Error(text);
+    }
+
+    return await response.json();
+}

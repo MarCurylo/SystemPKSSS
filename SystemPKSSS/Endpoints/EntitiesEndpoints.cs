@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SystemPKSSS.Models;
 using SystemPKSSSS.Data;
 using SystemPKSSS.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SystemPKSSSS.Endpoints;
 
@@ -10,7 +11,7 @@ public static class EntitiesEndpoints
     public static void MapEntityEndpoints(this IEndpointRouteBuilder app)
     {
         // Vytvoření nové entity
-        app.MapPost("/services/{serviceId}/entityTypes/{entityTypeId}/entities", async (int serviceId, int entityTypeId, CreateEntityDto dto, ApplicationDbContext db) =>
+        app.MapPost("/services/{serviceId}/entityTypes/{entityTypeId}/entities", [Authorize(Roles = "Admin")] async (int serviceId, int entityTypeId, CreateEntityDto dto, ApplicationDbContext db) =>
         {
             try
             {
@@ -30,7 +31,6 @@ public static class EntitiesEndpoints
                         ValueNumber = v.ValueNumber,
                         ValueDate = v.ValueDate,
                         ValueBoolean = v.ValueBoolean,
-                        ValueFileId = v.ValueFileId,
                         CreatedAt = DateTimeOffset.UtcNow
                     }).ToList()
                 };
@@ -54,7 +54,6 @@ public static class EntitiesEndpoints
                         ValueNumber = av.ValueNumber,
                         ValueDate = av.ValueDate,
                         ValueBoolean = av.ValueBoolean,
-                        ValueFileId = av.ValueFileId,
                         CreatedAt = av.CreatedAt
                     }).ToList()
                 };
@@ -63,7 +62,6 @@ public static class EntitiesEndpoints
             }
             catch (Exception ex)
             {
-                // Vypiš detail chyby do response
                 return Results.Problem(ex.Message);
             }
         });
@@ -95,7 +93,6 @@ public static class EntitiesEndpoints
                         ValueNumber = av.ValueNumber,
                         ValueDate = av.ValueDate,
                         ValueBoolean = av.ValueBoolean,
-                        ValueFileId = av.ValueFileId,
                         CreatedAt = av.CreatedAt
                     }).ToList()
                 }).ToList();
@@ -138,7 +135,6 @@ public static class EntitiesEndpoints
                         ValueNumber = av.ValueNumber,
                         ValueDate = av.ValueDate,
                         ValueBoolean = av.ValueBoolean,
-                        ValueFileId = av.ValueFileId,
                         CreatedAt = av.CreatedAt
                     }).ToList()
                 };
@@ -152,7 +148,7 @@ public static class EntitiesEndpoints
         });
 
         // Update entity
-        app.MapPut("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}", async (int serviceId, int entityTypeId, int entityId, CreateEntityDto dto, ApplicationDbContext db) =>
+        app.MapPut("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}", [Authorize(Roles = "Admin")] async (int serviceId, int entityTypeId, int entityId, CreateEntityDto dto, ApplicationDbContext db) =>
         {
             try
             {
@@ -172,7 +168,6 @@ public static class EntitiesEndpoints
                     ValueNumber = v.ValueNumber,
                     ValueDate = v.ValueDate,
                     ValueBoolean = v.ValueBoolean,
-                    ValueFileId = v.ValueFileId,
                     CreatedAt = DateTimeOffset.UtcNow
                 }).ToList();
 
@@ -196,7 +191,6 @@ public static class EntitiesEndpoints
                         ValueNumber = av.ValueNumber,
                         ValueDate = av.ValueDate,
                         ValueBoolean = av.ValueBoolean,
-                        ValueFileId = av.ValueFileId,
                         CreatedAt = av.CreatedAt
                     }).ToList()
                 };
@@ -210,7 +204,7 @@ public static class EntitiesEndpoints
         });
 
         // Mazání entity DELETE
-        app.MapDelete("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}", async (int serviceId, int entityTypeId, int entityId, ApplicationDbContext db) =>
+        app.MapDelete("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}", [Authorize(Roles = "Admin")] async (int serviceId, int entityTypeId, int entityId, ApplicationDbContext db) =>
         {
             try
             {
