@@ -14,16 +14,20 @@ namespace SystemPKSSSS.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); // velmi důležité, musí být na začátku
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<AttributeDefinition>()
                 .Property(a => a.AttributeType)
                 .HasConversion<string>();
 
-            // Pokud budeš chtít další konfigurace, přidej zde
+            // Nastavení kaskádového mazání mezi Entity a EntityAttributeValue
+            modelBuilder.Entity<EntityAttributeValue>()
+                .HasOne(eav => eav.Entity)
+                .WithMany(e => e.AttributeValues)
+                .HasForeignKey(eav => eav.EntityId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
-        // DbSety pro tvoje vlastní entity
         public DbSet<Service> Services { get; set; }
         public DbSet<Entity> Entities { get; set; }
         public DbSet<EntityType> EntityTypes { get; set; }

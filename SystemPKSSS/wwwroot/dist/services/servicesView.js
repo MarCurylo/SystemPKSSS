@@ -258,7 +258,6 @@ function renderServiceDetailPanel(serviceId, container) {
           </span>
         </div>
         <div style="margin-bottom:1.2em;">
-          <strong>Typy entit:</strong><br>
           <button class="button secondary" id="toggle-entity-types">Typy entit</button>
         </div>
         <div>

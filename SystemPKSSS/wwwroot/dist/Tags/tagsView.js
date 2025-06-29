@@ -22,9 +22,7 @@ export function renderTagsTab(serviceId, container) {
         const createTagContainer = container.querySelector("#create-tag-container");
         const tagsList = container.querySelector("#tags-list");
         const showCreateBtn = container.querySelector("#show-create-tag-btn");
-        // Vykresli tagy ihned (nad formulářem)
         yield refreshTagsList(serviceId, tagsList);
-        // Vytvořit TAG (toggle panel)
         if (showCreateBtn && createTagContainer) {
             let open = false;
             showCreateBtn.addEventListener("click", () => {
@@ -115,7 +113,7 @@ function renderCreateTagForm(serviceId, container, onSuccess) {
     const colorInput = form.querySelector("#tag-color");
     const colorPreview = form.querySelector("#color-preview");
     const messageDiv = container.querySelector("#create-tag-message");
-    // Živý náhled barvy (při změně inputu barvy)
+    // Živý náhled barvy
     colorInput.addEventListener("input", () => {
         colorPreview.style.background = colorInput.value;
     });

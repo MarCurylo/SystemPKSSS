@@ -4,9 +4,7 @@ import { renderMainNavigation } from "./core/Navigation.js";
 export let currentUserRoles: string[] = [];
 export let currentUserName: string | null = null;
 
-/**
- * Načte aktuálního přihlášeného uživatele a jeho role z backendu.
- */
+
 export async function loadCurrentUser() {
     try {
         const res = await fetch('/api/users/me', { credentials: 'include' });
@@ -24,15 +22,11 @@ export async function loadCurrentUser() {
     }
 }
 
-/**
- * Spustí se po načtení stránky.
- * Nejprve načte aktuálního uživatele, pak vykreslí navigaci,
- * a nakonec spustí router, který zobrazí správnou stránku podle URL.
- */
+
 async function startApp() {
-    await loadCurrentUser();        // načti uživatele a role
-    await renderMainNavigation();   // vykresli menu/nav
-    handleHashChange();             // vykresli stránku podle URL hash
+    await loadCurrentUser();       
+    await renderMainNavigation();   
+    handleHashChange();             
 }
 
 window.addEventListener("load", startApp);

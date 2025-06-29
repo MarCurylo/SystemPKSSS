@@ -1,6 +1,3 @@
-// HelpBubble.ts
-
-// 1) Nápovědy jako šablony – čísla nahradíš :id, :id2...
 const helpTexts: Record<string, string> = {
   "/": "Toto je hlavní stránka systému PKSSS. Pokud ještě nejste přihlášení, přihlaste se.",
   "#/login": "Tady se můžete zaregistrovat nebo přihlásit. K přihlášení použijte Uživatelské jméno Super a Heslo Abc123.",
@@ -13,10 +10,9 @@ const helpTexts: Record<string, string> = {
   "#services#:id#entitytypes#:id2#attributedefinitions": "Seznam atributů pro vybraný typ entity. Zde upravíte vlastnosti a zobrazíte entity. Mlže to být text, ale také číslo, uzavřená volba, nebo třeba datum. Dvě vlastnosti se mohou zobrazovat v menu, jako jméno.",
   "#services#:id#entitytypes#:id2#entities": "Seznam entit tohoto typu.",
   "#services#:id#entitytypes#:id2#entities#:id3": "Detail konkrétní entity.",
-  // ... přidej další patterns podle potřeb
 };
 
-// 2) Funkce pro převod aktuálního hashe na pattern:
+
 function normalizeHashToPattern(hash: string): string {
   // Rozděl hash podle #
   const parts = hash.replace(/^#/, "").split("#");
@@ -34,7 +30,6 @@ function normalizeHashToPattern(hash: string): string {
   return pattern || "/";
 }
 
-// 3) Najdi nejlepší odpovídající šablonu
 function getBestHelpText(hash: string): string {
   const pattern = normalizeHashToPattern(hash);
   let best = "/";
@@ -46,13 +41,12 @@ function getBestHelpText(hash: string): string {
   return helpTexts[best] || "Zatím není připravena nápověda pro tuto sekci. (Doplníš ručně v HelpBubble.ts)";
 }
 
-// 4) Zobraz skleněnou bublinu vlevo dole
 let helpBubble: HTMLElement | null = null;
 export function showHelpBubble() {
   const hash = window.location.hash || "/";
   const text = getBestHelpText(hash);
 
-  // Pokud už je otevřená bublina, zavři ji
+
   if (helpBubble) {
     helpBubble.remove();
     helpBubble = null;

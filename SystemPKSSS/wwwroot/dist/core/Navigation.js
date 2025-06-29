@@ -18,53 +18,80 @@ export function renderMainNavigation(options) {
         const navContainer = document.getElementById("nav-container");
         if (!navContainer)
             return;
-        const collapseStates = {};
-        if (options === null || options === void 0 ? void 0 : options.CollapseState) {
-            document.querySelectorAll('[data-toggle="fluid-collapse"]').forEach((toggle) => {
-                const target = toggle.getAttribute("data-target");
-                if (!target)
-                    return;
-                const expanded = toggle.getAttribute("aria-expanded") === "true";
-                collapseStates[target] = expanded;
-            });
-        }
-        // --- Uživatel + role + admin tlačítko ---
-        let isAdmin = false;
-        let userBlock = `
-    <div class="mt-5 pt-3 border-top">
-      <a href="#/login" class="nav-link text-primary fw-bold">
-        Přihlášení / Registrace
-      </a>
-    </div>
-  `;
+        // --- Ověření přihlášení uživatele ---
+        let isLoggedIn = false;
+        let userInfo = null;
         try {
             const res = yield fetch('/api/users/me', { credentials: 'include' });
             if (res.ok) {
-                const userInfo = yield res.json();
-                const roles = userInfo.roles || userInfo.Roles || [];
-                isAdmin = roles.includes("Admin");
-                let roleHtml = isAdmin
-                    ? `<a href="#/admin-users" class="text-danger fw-bold" style="text-decoration: none;">Admin</a>`
-                    : "Uživatel";
-                const jmeno = userInfo.userName ||
-                    userInfo.UserName ||
-                    userInfo.username ||
-                    userInfo.Email ||
-                    userInfo.email ||
-                    "Bez jména";
-                userBlock = `
-        <div class="mt-5 pt-3 border-top">
-          <div class="fw-bold text-success">${jmeno}</div>
-          <div class="small text-muted">${roleHtml}</div>
-          <button id="logout-btn" class="btn btn-sm btn-outline-secondary mt-2">Odhlásit</button>
-        </div>
-      `;
+                userInfo = yield res.json();
+                isLoggedIn = true;
             }
         }
-        catch (e) {
-            // Uživatelský blok fallback
+        catch (_a) { }
+        if (!isLoggedIn) {
+            // Navigace je jen login/registrace + help bubble
+            navContainer.innerHTML = `
+      <div class="mt-5 pt-3 text-center">
+        <a href="#/login" class="nav-link text-primary fw-bold" style="font-size:1.18em;">
+          Přihlášení / Registrace
+        </a>
+      </div>
+
+      <div id="help-fab-container" style="
+        position: fixed;
+        left: 28px;
+        bottom: 28px;
+        z-index: 1500;">
+        <button id="help-fab" style="
+          width: 52px;
+          height: 52px;
+          border-radius: 50%;
+          border: none;
+          background: rgba(255,255,255,0.85);
+          box-shadow: 0 2px 18px 0 rgba(120,110,180,0.19), 0 1.5px 12px 0 rgba(170,150,180,0.07);
+          color: #5b53d2;
+          font-size: 2.4em;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          transition: box-shadow 0.18s, background 0.19s;
+          backdrop-filter: blur(7px);
+          outline: none;">
+          ?
+        </button>
+      </div>
+    `;
+            const helpFab = document.getElementById("help-fab");
+            if (helpFab) {
+                helpFab.addEventListener("click", () => showHelpBubble());
+            }
+            return;
         }
-        // --- Hlavní navigace (služby, typy, entity...) ---
+        // --- Uživatel + role + admin tlačítko ---
+        let isAdmin = false;
+        let userBlock = "";
+        const roles = userInfo.roles || userInfo.Roles || [];
+        isAdmin = roles.includes("Admin");
+        let roleHtml = isAdmin
+            ? `<a href="#/admin-users" class="text-danger fw-bold" style="text-decoration: none;">Admin</a>`
+            : "Uživatel";
+        const jmeno = userInfo.userName ||
+            userInfo.UserName ||
+            userInfo.username ||
+            userInfo.Email ||
+            userInfo.email ||
+            "Bez jména";
+        userBlock = `
+    <div class="mt-5 pt-3 border-top">
+      <div class="fw-bold text-success">${jmeno}</div>
+      <div class="small text-muted">${roleHtml}</div>
+      <button id="logout-btn" class="btn btn-sm btn-outline-secondary mt-2">Odhlásit</button>
+    </div>
+  `;
+        // --- Hlavní navigace ---
         const services = yield loadServices();
         let html = `
     <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
@@ -147,33 +174,34 @@ export function renderMainNavigation(options) {
       </div>
     `;
         }
+        // -------- HELP BUBBLE --------
         html += `
- <div id="help-fab-container" style="
-  position: fixed;
-  left: 28px;
-  bottom: 28px;
-  z-index: 1500;">
-  <button id="help-fab" style="
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255,255,255,0.85);
-    box-shadow: 0 2px 18px 0 rgba(120,110,180,0.19), 0 1.5px 12px 0 rgba(170,150,180,0.07);
-    color: #5b53d2;
-    font-size: 2.4em;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    transition: box-shadow 0.18s, background 0.19s;
-    backdrop-filter: blur(7px);
-    outline: none;">
-    ?
-  </button>
-</div>
-`;
+   <div id="help-fab-container" style="
+    position: fixed;
+    left: 28px;
+    bottom: 28px;
+    z-index: 1500;">
+    <button id="help-fab" style="
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.85);
+      box-shadow: 0 2px 18px 0 rgba(120,110,180,0.19), 0 1.5px 12px 0 rgba(170,150,180,0.07);
+      color: #5b53d2;
+      font-size: 2.4em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: box-shadow 0.18s, background 0.19s;
+      backdrop-filter: blur(7px);
+      outline: none;">
+      ?
+    </button>
+  </div>
+  `;
         navContainer.innerHTML = html;
         const helpFab = document.getElementById("help-fab");
         if (helpFab) {
@@ -213,6 +241,14 @@ export function renderMainNavigation(options) {
         }
         // Obnovení collapse stavů
         if (options === null || options === void 0 ? void 0 : options.CollapseState) {
+            const collapseStates = {};
+            document.querySelectorAll('[data-toggle="fluid-collapse"]').forEach((toggle) => {
+                const target = toggle.getAttribute("data-target");
+                if (!target)
+                    return;
+                const expanded = toggle.getAttribute("aria-expanded") === "true";
+                collapseStates[target] = expanded;
+            });
             Object.entries(collapseStates).forEach(([selector, expanded]) => {
                 const toggle = document.querySelector(`[data-toggle="fluid-collapse"][data-target="${selector}"]`);
                 const collapse = document.querySelector(selector);
@@ -228,7 +264,6 @@ export function renderMainNavigation(options) {
                 }
             });
         }
-        // --------- Logout handler (přidat vždy po vložení do DOMu) ---------
         const logoutBtn = document.getElementById("logout-btn");
         if (logoutBtn) {
             logoutBtn.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {

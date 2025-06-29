@@ -1,6 +1,5 @@
 namespace SystemPKSSS.DTOs
 {
-    // DTO pro vytvoření nového typu entity (input)
     public class CreateEntityTypeDto
     {
         public int ServiceId { get; set; }
@@ -12,7 +11,6 @@ namespace SystemPKSSS.DTOs
         public bool Auditable { get; set; } = false;
     }
 
-    // DTO pro úpravu typu entity (input)
     public class UpdateEntityTypeDto
     {
         public string Name { get; set; }
@@ -23,7 +21,6 @@ namespace SystemPKSSS.DTOs
         public bool Auditable { get; set; }
     }
 
-    // DTO pro výpis (output)
     public class EntityTypeDto
     {
         public int Id { get; set; }

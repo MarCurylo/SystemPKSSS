@@ -3,7 +3,6 @@ import {
   loadAttributeDefinitionsByEntityType,
   createAttributeDefinition,
   patchIsDisplayName,
-  // +++ přidáme import, pokud existuje API pro mazání:
   deleteAttributeDefinition
 } from "./attributeDefinitionsApi.js";
 import { AttributeDefinition, NewAttributeDefinition } from "./attributeDefinitionsModel.js";

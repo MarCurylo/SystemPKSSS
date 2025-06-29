@@ -8,7 +8,7 @@ import {
 import { EntityType, NewEntityType, UpdateEntityType } from './entityTypesModel.js';
 import { loadAttributeDefinitionsByEntityType } from '../AttributeDefinitions/attributeDefinitionsApi.js';
 import { renderMainNavigation } from '../core/Navigation.js';
-import { currentUserRoles } from '../app.js'; // uprav cestu k aktuálnímu uložení
+import { currentUserRoles } from '../app.js';
 
 export function renderEntityTypeTab(serviceId: number, container: HTMLElement) {
   container.innerHTML = `

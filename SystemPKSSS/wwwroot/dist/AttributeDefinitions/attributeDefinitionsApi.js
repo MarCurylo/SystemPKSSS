@@ -43,7 +43,6 @@ export function deleteAttributeDefinition(serviceId, entityTypeId, attributeDefi
     });
 }
 // PATCH endpoint pro nastavení isDisplayName (je-li v backendu)
-// Pokud nemáš, tento kód můžeš použít později pro PATCH volání
 export function patchIsDisplayName(serviceId, entityTypeId, attributeDefinitionId, isDisplayName) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/attributeDefinitions/${attributeDefinitionId}`, {

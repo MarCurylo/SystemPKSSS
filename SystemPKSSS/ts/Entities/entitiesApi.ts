@@ -48,7 +48,7 @@ export async function updateEntity(
     serviceId: number,
     entityTypeId: number,
     entityId: number,
-    updatedEntity: CreateEntity // stejné jako při vytváření: { attributeValues: EntityAttributeValue[] }
+    updatedEntity: CreateEntity
 ): Promise<Entity> {
     const response = await fetch(
         `/services/${serviceId}/entityTypes/${entityTypeId}/entities/${entityId}`,
@@ -66,4 +66,24 @@ export async function updateEntity(
     }
 
     return await response.json();
+}
+
+export async function deleteEntity(
+    serviceId: number,
+    entityTypeId: number,
+    entityId: number
+): Promise<void> {
+    const response = await fetch(
+        `/services/${serviceId}/entityTypes/${entityTypeId}/entities/${entityId}`,
+        {
+            method: "DELETE",
+            headers: { 'Content-Type': 'application/json' }
+        }
+    );
+
+    if (!response.ok) {
+        const text = await response.text();
+        console.error("Failed to delete entity:", text);
+        throw new Error(text);
+    }
 }

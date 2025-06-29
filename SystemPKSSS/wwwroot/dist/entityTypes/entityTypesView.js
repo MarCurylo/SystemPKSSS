@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { loadEntityTypes, createEntityType, deleteEntityType, updateEntityType, loadEntityType as loadEntityTypeDetail, } from './entityTypesApi.js';
 import { loadAttributeDefinitionsByEntityType } from '../AttributeDefinitions/attributeDefinitionsApi.js';
 import { renderMainNavigation } from '../core/Navigation.js';
-import { currentUserRoles } from '../app.js'; // uprav cestu k aktuálnímu uložení
+import { currentUserRoles } from '../app.js';
 export function renderEntityTypeTab(serviceId, container) {
     var _a;
     container.innerHTML = `

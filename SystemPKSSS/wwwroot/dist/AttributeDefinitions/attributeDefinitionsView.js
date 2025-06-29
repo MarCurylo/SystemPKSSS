@@ -7,9 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { loadAttributeDefinitionsByEntityType, createAttributeDefinition, patchIsDisplayName, 
-// +++ přidáme import, pokud existuje API pro mazání:
-deleteAttributeDefinition } from "./attributeDefinitionsApi.js";
+import { loadAttributeDefinitionsByEntityType, createAttributeDefinition, patchIsDisplayName, deleteAttributeDefinition } from "./attributeDefinitionsApi.js";
 import { ATTRIBUTE_TYPE_OPTIONS } from "./attributeDefinitionsModel.js";
 import { currentUserRoles } from "../app.js";
 // Hlavní tab - seznam vlastností

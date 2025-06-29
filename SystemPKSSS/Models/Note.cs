@@ -14,13 +14,11 @@ namespace SystemPKSSS.Models
         public Entity Entity { get; set; }
 
         public int? AuthorUserId { get; set; }
-        // public User User { get; set; }
 
         public string Text { get; set; }
 
 public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 public DateTimeOffset? UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 
-        // public Service Service { get; set; }   // není třeba v Note, pokud není přímá vazba!
     }
 }

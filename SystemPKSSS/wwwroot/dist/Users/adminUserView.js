@@ -105,7 +105,6 @@ export function renderAdminUsersTab(container) {
                     credentials: "include",
                     body: JSON.stringify({ Role: role })
                 });
-                // Role se přepíše rovnou, reload není potřeba
             }));
         });
     });

@@ -1,5 +1,4 @@
 import { AttributeDefinition, NewAttributeDefinition } from "./attributeDefinitionsModel.js";
-import { AttributeEnumValue } from "../AttributeDefinitionEnumValues/attributeEnumValuesModel.js";
 
 // Načti všechny definice atributu v danem entity typu
 export async function loadAttributeDefinitionsByEntityType(serviceId: number, entityTypeId: number): Promise<AttributeDefinition[]> {
@@ -42,7 +41,6 @@ export async function deleteAttributeDefinition(
 }
 
 // PATCH endpoint pro nastavení isDisplayName (je-li v backendu)
-// Pokud nemáš, tento kód můžeš použít později pro PATCH volání
 export async function patchIsDisplayName(
     serviceId: number,
     entityTypeId: number,

@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { loadEntitiesByEntityType, createEntity, loadEntityDetail, updateEntity } from "./entitiesApi.js";
+import { loadEntitiesByEntityType, createEntity, loadEntityDetail, updateEntity, deleteEntity } from "./entitiesApi.js";
 import { loadAttributeDefinitionsByEntityType } from "../AttributeDefinitions/attributeDefinitionsApi.js";
 import { loadEntityType } from "../entityTypes/entityTypesApi.js";
 import { loadTagsByService } from "../Tags/tagsApi.js";
@@ -89,12 +89,17 @@ export function refreshEntityList(serviceId, entityTypeId, attributeDefinitions)
         </tr>
       `;
             }).join("");
+            // Přidáme tlačítko mazání pro admina
+            const deleteBtnHtml = currentUserRoles.includes("Admin")
+                ? `<button class="entity-delete-btn button danger" data-entity-id="${entity.id}" style="margin-left:0.8em;">Smazat</button>`
+                : "";
             return `
       <div class="editor-block animated-fadein" style="margin-bottom:1.1em;max-width:520px;">
         <div style="display:flex;align-items:center;margin-bottom:0.7em;">
           <span style="color:#a27808;font-weight:700;letter-spacing:0.02em;">ID:</span>
           <span style="margin-left:0.5em;">${entity.id}</span>
           <button class="entity-detail-btn button" data-entity-id="${entity.id}" style="margin-left:auto;">Detail</button>
+          ${deleteBtnHtml}
         </div>
         <table style="border:none; background:transparent; box-shadow:none; font-size:1.08em; margin-bottom:0; width:auto;">
           <tbody>
@@ -104,6 +109,7 @@ export function refreshEntityList(serviceId, entityTypeId, attributeDefinitions)
       </div>
     `;
         }).join("");
+        // Detail entity
         document.querySelectorAll(".entity-detail-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const entityId = parseInt(e.target.dataset.entityId);
@@ -117,6 +123,29 @@ export function refreshEntityList(serviceId, entityTypeId, attributeDefinitions)
                     lastOpenedEntityId = entityId;
                 }
             });
+        });
+        // Mazání entity
+        document.querySelectorAll(".entity-delete-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
+                const entityId = parseInt(e.target.dataset.entityId);
+                if (confirm("Opravdu chcete tuto entitu smazat?")) {
+                    try {
+                        yield deleteEntity(serviceId, entityTypeId, entityId);
+                        // Pokud je smazán detail, tak ho schovej
+                        if (lastOpenedEntityId === entityId) {
+                            const detailPanel = document.getElementById("entity-detail-panel");
+                            if (detailPanel)
+                                detailPanel.innerHTML = "";
+                            lastOpenedEntityId = null;
+                        }
+                        // Refresh seznamu
+                        refreshEntityList(serviceId, entityTypeId, attributeDefinitions);
+                    }
+                    catch (err) {
+                        alert("Chyba při mazání entity.");
+                    }
+                }
+            }));
         });
     });
 }

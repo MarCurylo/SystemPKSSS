@@ -48,8 +48,7 @@ export function loadEntityDetail(serviceId, entityTypeId, entityId) {
         return yield response.json();
     });
 }
-export function updateEntity(serviceId, entityTypeId, entityId, updatedEntity // stejné jako při vytváření: { attributeValues: EntityAttributeValue[] }
-) {
+export function updateEntity(serviceId, entityTypeId, entityId, updatedEntity) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/entities/${entityId}`, {
             method: "PUT",
@@ -62,5 +61,18 @@ export function updateEntity(serviceId, entityTypeId, entityId, updatedEntity //
             throw new Error(text);
         }
         return yield response.json();
+    });
+}
+export function deleteEntity(serviceId, entityTypeId, entityId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(`/services/${serviceId}/entityTypes/${entityTypeId}/entities/${entityId}`, {
+            method: "DELETE",
+            headers: { 'Content-Type': 'application/json' }
+        });
+        if (!response.ok) {
+            const text = yield response.text();
+            console.error("Failed to delete entity:", text);
+            throw new Error(text);
+        }
     });
 }

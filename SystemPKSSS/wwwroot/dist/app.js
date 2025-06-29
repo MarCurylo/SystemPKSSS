@@ -11,9 +11,6 @@ import { handleHashChange } from "./core/Router.js";
 import { renderMainNavigation } from "./core/Navigation.js";
 export let currentUserRoles = [];
 export let currentUserName = null;
-/**
- * Načte aktuálního přihlášeného uživatele a jeho role z backendu.
- */
 export function loadCurrentUser() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -34,16 +31,11 @@ export function loadCurrentUser() {
         }
     });
 }
-/**
- * Spustí se po načtení stránky.
- * Nejprve načte aktuálního uživatele, pak vykreslí navigaci,
- * a nakonec spustí router, který zobrazí správnou stránku podle URL.
- */
 function startApp() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield loadCurrentUser(); // načti uživatele a role
-        yield renderMainNavigation(); // vykresli menu/nav
-        handleHashChange(); // vykresli stránku podle URL hash
+        yield loadCurrentUser();
+        yield renderMainNavigation();
+        handleHashChange();
     });
 }
 window.addEventListener("load", startApp);

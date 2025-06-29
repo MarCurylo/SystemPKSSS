@@ -10,10 +10,8 @@ public static class AttributeDefinitionsEndpoints
 {
     public static void MapAttributeDefinitionsEndpoints(this IEndpointRouteBuilder app)
     {
-        // Vytvoření nového atributu
         app.MapPost("/services/{serviceId}/entityTypes/{entityTypeId}/attributeDefinitions", [Authorize(Roles = "Admin")] async (int serviceId, int entityTypeId, CreateAttributeDefinitionDto dto, ApplicationDbContext db) =>
         {
-            // Validace existence typu entity
             var entityTypeExists = await db.EntityTypes.AnyAsync(s => s.Id == entityTypeId && s.ServiceId == serviceId);
             if (!entityTypeExists)
                 return Results.BadRequest($"Entity type with ID {entityTypeId} does not exist for service {serviceId}.");
@@ -54,7 +52,6 @@ public static class AttributeDefinitionsEndpoints
             return Results.Created($"/attributeDefinitions/{attributeDefinition.Id}", result);
         });
 
-        // Výpis definic atributu podle typu entity – včetně EnumValues!
         app.MapGet("/services/{serviceId}/entityTypes/{entityTypeId}/attributeDefinitions", async (int serviceId, int entityTypeId, ApplicationDbContext db) =>
         {
             var attributeDefinitions = await db.AttributeDefinitions

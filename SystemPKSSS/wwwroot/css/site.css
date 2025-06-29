@@ -1,4 +1,4 @@
-/* === ZÁKLADNÍ NASTAVENÍ STRÁNKY === */
+
 html, body {
   background: #fef9f4;
   color: #333;
@@ -8,14 +8,14 @@ html, body {
   min-height: 100vh;
 }
 
-/* Flexbox rozvržení pro hlavní layout (sidebar + hlavní obsah) */
+
 body.d-flex {
   min-height: 100vh;
   align-items: stretch;
   gap: 0;
 }
 
-/* === SIDEBAR (ZLATAVÝ, GLASSY PANEL) === */
+
 #nav-container {
   background: rgba(247, 225, 143, 0.93);
   backdrop-filter: blur(14px) saturate(160%);
@@ -144,7 +144,7 @@ body.d-flex {
   color: #a27808;
 }
 
-/* Glassy decentní scrollbar v sidebaru */
+
 #nav-container {
   scrollbar-width: thin;
   scrollbar-color: #f2d365 #f9f3e2;
@@ -158,7 +158,7 @@ body.d-flex {
   border-radius: 4px;
 }
 
-/* === HLAVNÍ TABULE (TMAVŠÍ KRÉMOVÁ, VÝRAZNÝ STÍN) === */
+
 #main-container {
   background: linear-gradient(
     145deg,
@@ -214,7 +214,7 @@ body.d-flex {
   }
 }
 
-/* === UNIFIKOVANÁ HRANATÁ TLAČÍTKA === */
+
 .button,
 button,
 input[type="submit"] {
@@ -278,7 +278,7 @@ button.secondary:focus {
   color: #a08527;
 }
 
-/* === FLUID COLLAPSE (univerzální animace) === */
+
 .fluid-collapse {
   overflow: hidden;
   transition:
@@ -298,7 +298,7 @@ button.secondary:focus {
   pointer-events: none;
 }
 
-/* === ZÁKLADNÍ STYL ODKAZŮ, FORMULÁŘŮ, TYPOGRAFIE === */
+
 a {
   color: #a27808;
   transition: color 0.14s;
@@ -342,7 +342,7 @@ strong, b {
   color: #a27808;
 }
 
-/* === TABULKY === */
+
 table {
   width: 100%;
   border-collapse: separate;
@@ -365,14 +365,14 @@ td {
   color: #5c3e00;
 }
 
-/* === ČISTÉ HR === */
+
 hr {
   border: none;
   border-top: 1.3px solid #edd270;
   margin: 1em 0;
 }
 
-/* === VYLEPŠENÍ INLINE BLOKŮ V SEZNAMU SLUŽEB === */
+
 #services-list > div {
   margin-bottom: 0.5em;
   padding-bottom: 0.3em;
@@ -402,17 +402,17 @@ hr {
   background: #fff7d4;
 }
 
-/* Tlačítka v editoru bloku zarovnat od sebe */
+
 .editor-block button {
   margin-right: 0.5em;
 }
 
-/* Zvětši textareu */
+
 .editor-block textarea {
   min-height: 3.6em;
   resize: vertical;
 }
-/* Efekt pro pravý panel ("vyskakovací okno" na světlém pozadí) */
+
 #entity-types-panel {
   position: relative;
   z-index: 3;
@@ -420,7 +420,7 @@ hr {
   max-width: 550px;
   margin-left: 0;
   margin-right: 0;
-  /* Stejné pozadí a stín jako editor-block */
+
   box-shadow: 0 4px 32px 0 rgba(210,180,80,0.10);
   transition: 
     opacity 0.33s cubic-bezier(.4,0,.2,1),
@@ -464,7 +464,7 @@ input[type="checkbox"].styled-checkbox:checked {
   border-color: #bfa536;
 }
 
-/* Už žádný ::after, žádná fajfka! */
+
 
 input[type="checkbox"].styled-checkbox:focus {
   outline: 2px solid #e3c266;

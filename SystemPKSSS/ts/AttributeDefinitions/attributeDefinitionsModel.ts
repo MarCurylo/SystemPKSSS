@@ -27,7 +27,7 @@ export interface AttributeDefinition {
   enumValues?: AttributeEnumValue[];
   isRequired: boolean;
   orderIndex: number;
-  isDisplayName: boolean; // <-- přidáno!
+  isDisplayName: boolean;
   createdAt: string;
 }
 

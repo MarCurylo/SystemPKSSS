@@ -100,7 +100,6 @@ export async function renderAdminUsersTab(container: HTMLElement) {
         credentials: "include",
         body: JSON.stringify({ Role: role })
       });
-      // Role se přepíše rovnou, reload není potřeba
     });
   });
 }

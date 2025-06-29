@@ -1,6 +1,6 @@
 namespace SystemPKSSS.DTOs
 {
-    // DTO pro vytvoření nové entity (input)
+
     public class CreateEntityDto
     {
         public int ServiceId { get; set; }
@@ -8,7 +8,6 @@ namespace SystemPKSSS.DTOs
         public List<CreateEntityAttributeValueDto> AttributeValues { get; set; } = new();
     }
 
-    // DTO pro výpis entity (output)
     public class EntityDto
     {
         public int Id { get; set; }
@@ -20,7 +19,6 @@ namespace SystemPKSSS.DTOs
         public List<EntityAttributeValueDto> AttributeValues { get; set; } = new();
     }
 
-    // DTO pro vytvoření hodnoty atributu (input)
     public class CreateEntityAttributeValueDto
     {
         public int AttributeDefinitionId { get; set; }
@@ -30,7 +28,6 @@ namespace SystemPKSSS.DTOs
         public bool? ValueBoolean { get; set; }
     }
 
-    // DTO pro výpis hodnoty atributu (output)
     public class EntityAttributeValueDto
     {
         public int Id { get; set; }
