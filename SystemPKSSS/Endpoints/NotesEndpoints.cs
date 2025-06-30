@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SystemPKSSS.Models;
 using SystemPKSSSS.Data;
 using SystemPKSSS.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SystemPKSSSS.Endpoints;
 
@@ -11,7 +12,7 @@ public static class NotesEndpoints
     {
         // Přidání nové poznámky k entitě
         app.MapPost("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}/notes",
-            async (int serviceId, int entityTypeId, int entityId, CreateNoteDto dto, ApplicationDbContext db) =>
+            [Authorize] async (int serviceId, int entityTypeId, int entityId, CreateNoteDto dto, ApplicationDbContext db) =>
             {
                 var entity = await db.Entities
                     .Include(e => e.EntityType)
@@ -50,7 +51,7 @@ public static class NotesEndpoints
 
         // Výpis všech poznámek k entitě
         app.MapGet("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}/notes",
-            async (int serviceId, int entityTypeId, int entityId, ApplicationDbContext db) =>
+            [Authorize] async (int serviceId, int entityTypeId, int entityId, ApplicationDbContext db) =>
             {
                 var entity = await db.Entities
                     .Include(e => e.EntityType)
@@ -81,7 +82,7 @@ public static class NotesEndpoints
 
         // Detail poznámky
         app.MapGet("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}/notes/{noteId}",
-            async (int serviceId, int entityTypeId, int entityId, int noteId, ApplicationDbContext db) =>
+            [Authorize] async (int serviceId, int entityTypeId, int entityId, int noteId, ApplicationDbContext db) =>
             {
                 var entity = await db.Entities
                     .Include(e => e.EntityType)
@@ -111,7 +112,7 @@ public static class NotesEndpoints
 
         // Úprava poznámky
         app.MapPut("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}/notes/{noteId}",
-            async (int serviceId, int entityTypeId, int entityId, int noteId, UpdateNoteDto dto, ApplicationDbContext db) =>
+            [Authorize] async (int serviceId, int entityTypeId, int entityId, int noteId, UpdateNoteDto dto, ApplicationDbContext db) =>
             {
                 var entity = await db.Entities
                     .Include(e => e.EntityType)
@@ -137,7 +138,7 @@ public static class NotesEndpoints
 
         // Smazání poznámky
         app.MapDelete("/services/{serviceId}/entityTypes/{entityTypeId}/entities/{entityId}/notes/{noteId}",
-            async (int serviceId, int entityTypeId, int entityId, int noteId, ApplicationDbContext db) =>
+            [Authorize] async (int serviceId, int entityTypeId, int entityId, int noteId, ApplicationDbContext db) =>
             {
                 var entity = await db.Entities
                     .Include(e => e.EntityType)

@@ -10,7 +10,7 @@ public static class ServicesEndpoints
 {
     public static void MapServicesEndpoints(this IEndpointRouteBuilder app)
     {
-        // Vytvoření služby
+        // Vytvoření služby (jen admin)
         app.MapPost("/services", [Authorize(Roles = "Admin")] async (CreateServiceDto dto, ApplicationDbContext db) =>
         {
             var service = new Service
@@ -23,7 +23,6 @@ public static class ServicesEndpoints
             db.Services.Add(service);
             await db.SaveChangesAsync();
 
-            // Vracíme ServiceDto, ne entitu
             var result = new ServiceDto
             {
                 Id = service.Id,
@@ -35,8 +34,8 @@ public static class ServicesEndpoints
             return Results.Created($"/services/{service.Id}", result);
         });
 
-        // Výpis všech služeb
-        app.MapGet("/services", async (ApplicationDbContext db) =>
+        // Výpis všech služeb (jen přihlášený)
+        app.MapGet("/services", [Authorize] async (ApplicationDbContext db) =>
         {
             var services = await db.Services
                 .Select(service => new ServiceDto
@@ -51,8 +50,8 @@ public static class ServicesEndpoints
             return Results.Ok(services);
         });
 
-        // Detail služby
-        app.MapGet("/services/{id}", async (int id, ApplicationDbContext db) =>
+        // Detail služby (jen přihlášený, pokud chceš chránit)
+        app.MapGet("/services/{id}", [Authorize] async (int id, ApplicationDbContext db) =>
         {
             var service = await db.Services
                 .Where(s => s.Id == id)
@@ -69,7 +68,7 @@ public static class ServicesEndpoints
             return service is not null ? Results.Ok(service) : Results.NotFound();
         });
 
-        // Editace služby
+        // Editace služby (jen admin)
         app.MapPut("/services/{id}", [Authorize(Roles = "Admin")] async (int id, UpdateServiceDto dto, ApplicationDbContext db) =>
         {
             var service = await db.Services.FindAsync(id);
@@ -93,7 +92,7 @@ public static class ServicesEndpoints
             return Results.Ok(result);
         });
 
-        // Aktivace / deaktivace služby
+        // Aktivace / deaktivace služby (jen admin)
         app.MapPut("/services/{id}/activate", [Authorize(Roles = "Admin")] async (int id, bool activate, ApplicationDbContext db) =>
         {
             var service = await db.Services.FindAsync(id);
@@ -113,7 +112,7 @@ public static class ServicesEndpoints
             return Results.Ok(result);
         });
 
-        // Mazání služby
+        // Mazání služby (jen admin)
         app.MapDelete("/services/{id}", [Authorize(Roles = "Admin")] async (int id, ApplicationDbContext db) =>
         {
             var service = await db.Services.FindAsync(id);

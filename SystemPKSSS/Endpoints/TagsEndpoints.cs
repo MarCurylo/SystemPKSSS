@@ -12,7 +12,7 @@ public static class TagsEndpoints
     public static void MapTagsEndpoints(this IEndpointRouteBuilder app)
     {
         // Seznam tagů podle služby
-        app.MapGet("/services/{serviceId}/tags", async (int serviceId, ApplicationDbContext db) =>
+        app.MapGet("/services/{serviceId}/tags", [Authorize] async (int serviceId, ApplicationDbContext db) =>
         {
             var tags = await db.Tags
                 .Where(t => t.ServiceId == serviceId)
@@ -31,7 +31,7 @@ public static class TagsEndpoints
         });
 
         // Detail tagu
-        app.MapGet("/services/{serviceId}/tags/{tagId}", async (int serviceId, int tagId, ApplicationDbContext db) =>
+        app.MapGet("/services/{serviceId}/tags/{tagId}", [Authorize] async (int serviceId, int tagId, ApplicationDbContext db) =>
         {
             var tag = await db.Tags
                 .Where(t => t.ServiceId == serviceId && t.Id == tagId)
@@ -107,7 +107,7 @@ public static class TagsEndpoints
         });
 
         // Seznam propojení entity a tagů
-        app.MapGet("/services/{serviceId}/entities/{entityId}/tags", [Authorize(Roles = "Admin")] async (int serviceId, int entityId, ApplicationDbContext db) =>
+        app.MapGet("/services/{serviceId}/entities/{entityId}/tags", [Authorize] async (int serviceId, int entityId, ApplicationDbContext db) =>
         {
             // Kontrola existence entity patřící do služby
             var entityExists = await db.Entities.AnyAsync(e => e.Id == entityId && e.ServiceId == serviceId);

@@ -10,7 +10,7 @@ public static class EntityTypesEndpoints
 {
     public static void MapEntityTypesEndpoints(this IEndpointRouteBuilder app)
     {
-        // Vytvoření typu entity
+        // Vytvoření typu entity (jen admin)
         app.MapPost("/services/{serviceId}/entityTypes", [Authorize(Roles = "Admin")] async (int serviceId, CreateEntityTypeDto dto, ApplicationDbContext db) =>
         {
             var serviceExists = await db.Services.AnyAsync(s => s.Id == serviceId);
@@ -46,8 +46,8 @@ public static class EntityTypesEndpoints
             return Results.Created($"/services/{serviceId}/entityTypes/{entityType.Id}", result);
         });
 
-        // Výpis typu entit podle služby
-        app.MapGet("/services/{serviceId}/entityTypes", async (int serviceId, ApplicationDbContext db) =>
+        // Výpis typů entit podle služby (jen přihlášený)
+        app.MapGet("/services/{serviceId}/entityTypes", [Authorize] async (int serviceId, ApplicationDbContext db) =>
         {
             var entityTypes = await db.EntityTypes
                 .Where(et => et.ServiceId == serviceId)
@@ -68,8 +68,8 @@ public static class EntityTypesEndpoints
             return Results.Ok(entityTypes);
         });
 
-        // Detail typu entity
-        app.MapGet("/services/{serviceId}/entityTypes/{entityTypeId}", async (int serviceId, int entityTypeId, ApplicationDbContext db) =>
+        // Detail typu entity (jen přihlášený)
+        app.MapGet("/services/{serviceId}/entityTypes/{entityTypeId}", [Authorize] async (int serviceId, int entityTypeId, ApplicationDbContext db) =>
         {
             var et = await db.EntityTypes
                 .Where(x => x.Id == entityTypeId && x.ServiceId == serviceId)
@@ -89,9 +89,9 @@ public static class EntityTypesEndpoints
             return et is not null ? Results.Ok(et) : Results.NotFound();
         });
 
-        // Editace typu entity
+        // Editace typu entity (jen admin)
         app.MapPut("/services/{serviceId}/entityTypes/{entityTypeId}", [Authorize(Roles = "Admin")]
-            async (int serviceId, int entityTypeId, UpdateEntityTypeDto dto, ApplicationDbContext db) =>
+        async (int serviceId, int entityTypeId, UpdateEntityTypeDto dto, ApplicationDbContext db) =>
         {
             var entityType = await db.EntityTypes.FindAsync(entityTypeId);
             if (entityType is null || entityType.ServiceId != serviceId)
@@ -122,7 +122,7 @@ public static class EntityTypesEndpoints
             return Results.Ok(result);
         });
 
-        // Nastavení visibility
+        // Nastavení visibility (jen admin)
         app.MapPut("/entityTypes/{id}/visible", [Authorize(Roles = "Admin")] async (int id, bool visible, ApplicationDbContext db) =>
         {
             var entityType = await db.EntityTypes.FindAsync(id);
@@ -144,7 +144,7 @@ public static class EntityTypesEndpoints
             return Results.Ok(result);
         });
 
-        // Mazání typu entity
+        // Mazání typu entity (jen admin)
         app.MapDelete("/services/{serviceId}/entityTypes/{entityTypeId}", [Authorize(Roles = "Admin")] async (int serviceId, int entityTypeId, ApplicationDbContext db) =>
         {
             var entityType = await db.EntityTypes.FindAsync(entityTypeId);

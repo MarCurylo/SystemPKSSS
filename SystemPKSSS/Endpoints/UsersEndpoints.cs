@@ -9,7 +9,7 @@ public static class UserEndpoints
 {
     public static void MapUserEndpoints(WebApplication app)
     {
-        // Přihlášení
+        // Přihlášení (public)
         app.MapPost("/api/login", async ([FromBody] LoginRequest req, SignInManager<ApplicationUser> signInManager) =>
         {
             Console.WriteLine("Pokus o login: " + req.username + " | " + req.password);
@@ -20,7 +20,7 @@ public static class UserEndpoints
             return Results.Unauthorized();
         });
 
-        // Výpis vlastního profilu a rolí
+        // Výpis vlastního profilu a rolí (chráněné)
         app.MapGet("/api/users/me", [Authorize] async (UserManager<ApplicationUser> userManager, ClaimsPrincipal user) =>
         {
             var currentUser = await userManager.GetUserAsync(user);
@@ -29,7 +29,7 @@ public static class UserEndpoints
             return Results.Ok(new { currentUser.UserName, currentUser.Email, Roles = roles });
         });
 
-        // Výpis všech uživatelů (jen pro admina) – s rolemi!
+        // Výpis všech uživatelů (pouze admin)
         app.MapGet("/api/users", [Authorize(Roles = "Admin")] async (UserManager<ApplicationUser> userManager) =>
         {
             var users = await userManager.Users.ToListAsync();
@@ -49,7 +49,7 @@ public static class UserEndpoints
             return Results.Ok(result);
         });
 
-        // Registrace uživatele (každý se může registrovat)
+        // Registrace uživatele (public)
         app.MapPost("/api/users", async (
             [FromBody] CreateUserRequest req,
             UserManager<ApplicationUser> userManager,
@@ -68,7 +68,7 @@ public static class UserEndpoints
             return Results.Ok(new { user.Id, user.UserName, Role = req.role });
         });
 
-        // Smazání uživatele (jen admin)
+        // Smazání uživatele (pouze admin)
         app.MapDelete("/api/users/{id}", [Authorize(Roles = "Admin")] async (
             int id,
             UserManager<ApplicationUser> userManager
@@ -82,7 +82,7 @@ public static class UserEndpoints
             return Results.Ok();
         });
 
-        // Změna role uživatele (jen admin)
+        // Změna role uživatele (pouze admin)
         app.MapPost("/api/users/{id}/role", [Authorize(Roles = "Admin")] async (
             int id,
             [FromBody] ChangeRoleRequest req,
@@ -103,18 +103,19 @@ public static class UserEndpoints
             return Results.Ok();
         });
 
-        // Odhlášení
+        // Odhlášení (public, pro všechny přihlášené)
         app.MapPost("/api/logout", async (SignInManager<ApplicationUser> signInManager) =>
         {
             await signInManager.SignOutAsync();
             return Results.Ok();
         });
-        app.MapGet("/api/users/admin-exists", async (UserManager<ApplicationUser> userManager) =>
-{
-    var admins = await userManager.GetUsersInRoleAsync("Admin");
-    return Results.Ok(new { exists = admins.Any() });
-});
 
+        // Zjistit, jestli existuje admin (public)
+        app.MapGet("/api/users/admin-exists", async (UserManager<ApplicationUser> userManager) =>
+        {
+            var admins = await userManager.GetUsersInRoleAsync("Admin");
+            return Results.Ok(new { exists = admins.Any() });
+        });
     }
 
     // Inicializace rolí (zavolat při startu)

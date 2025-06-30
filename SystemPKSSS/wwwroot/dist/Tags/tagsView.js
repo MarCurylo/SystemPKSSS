@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { loadTagsByService, createTag } from "./tagsApi.js";
+import { loadTagsByService, createTag, deleteTag } from "./tagsApi.js";
 import { currentUserRoles } from "../app.js";
 export function renderTagsTab(serviceId, container) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -45,34 +45,68 @@ function refreshTagsList(serviceId, container) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const tags = yield loadTagsByService(serviceId);
+            const isAdmin = currentUserRoles.includes("Admin");
             if (tags.length === 0) {
                 container.innerHTML = "<p>Žádné tagy.</p>";
                 return;
             }
             container.innerHTML = `
-      <div style="display: flex; flex-wrap: wrap; gap: 0.65em 0.85em; padding-bottom: 0.2em;">
+      <ul style="list-style:none; padding:0; margin:0;">
         ${tags.map(tag => `
-          <span 
+          <li 
             style="
-              display: inline-block;
-              min-width: 74px;
-              background: ${tag.color};
-              color: #fff;
-              font-weight: 600;
-              padding: 6px 22px;
-              border-radius: 0.8em;
-              box-shadow: 0 2px 8px 0 rgba(140,120,0,0.07);
-              text-align: center;
-              letter-spacing: 0.01em;
-              font-size: 1.04em;
-              transition: background 0.13s;
-              user-select: all;
-            "
-            title="${tag.name}"
-          >${tag.name}</span>
+              display: flex; 
+              align-items: center; 
+              gap: 1.1em; 
+              margin-bottom: 0.8em;
+              background: #fafbfc;
+              border-radius: 0.7em;
+              padding: 0.6em 1em;
+              box-shadow: 0 2px 8px 0 rgba(140,120,0,0.06);
+            ">
+            <span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:${tag.color};border:1.5px solid #f2f2f2;box-shadow:0 0 0 2px #fff;margin-right:0.45em;"></span>
+            <span style="font-weight:600;font-size:1.09em;letter-spacing:0.01em;">${tag.name}</span>
+            <span style="color:#666;font-size:0.97em;margin-left:0.3em;flex:1 1 auto;">
+              ${tag.description ? tag.description : ""}
+            </span>
+            ${isAdmin
+                ? `<button class="delete-tag-btn" data-tag-id="${tag.id}" title="Smazat tag"
+                    style="
+                        margin-left:auto;
+                        background:#f5f5f6; 
+                        border:1px solid #eee; 
+                        color:#d03d3d;
+                        font-size: 1em;
+                        border-radius: 0.45em;
+                        cursor:pointer;
+                        padding: 0.33em 0.89em;
+                        transition: background .13s;
+                    "
+                  >Smazat</button>`
+                : ""}
+          </li>
         `).join("")}
-      </div>
+      </ul>
     `;
+            // Admin? Najdi všechny btn a napoj click
+            if (isAdmin) {
+                container.querySelectorAll(".delete-tag-btn").forEach(btn => {
+                    btn.addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const tagId = Number(btn.getAttribute("data-tag-id"));
+                        if (confirm("Opravdu chcete smazat tento tag?")) {
+                            try {
+                                yield deleteTag(serviceId, tagId);
+                                yield refreshTagsList(serviceId, container);
+                            }
+                            catch (_a) {
+                                alert("Chyba při mazání tagu.");
+                            }
+                        }
+                    }));
+                });
+            }
         }
         catch (_a) {
             container.innerHTML = "<p>Chyba při načítání tagů.</p>";
