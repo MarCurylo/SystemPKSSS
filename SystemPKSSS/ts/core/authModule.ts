@@ -35,7 +35,6 @@ export function renderAuthForms() {
                         <label for="reg-role" class="form-label">Role</label>
                         <select id="reg-role" name="role" class="form-select" required>
                             <option value="Uživatel">Uživatel</option>
-                            <option value="Admin">Admin</option>
                         </select>
                     </div>
                     <button class="btn btn-success">Registrovat</button>

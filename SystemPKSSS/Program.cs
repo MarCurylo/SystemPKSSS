@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SystemPKSSS.Models;
 using SystemPKSSSS.Data;
-using SystemPKSSSS.Endpoints; // <- přidej, pokud máš UserEndpoints.cs
+using SystemPKSSSS.Endpoints; 
 
 var builder = WebApplication.CreateBuilder(args);
 
